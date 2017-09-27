@@ -1,0 +1,32 @@
+image: ruby:2.4.1
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - bundler
+        services:
+          - postgres
+        script: # Modify the commands below to build your repository.
+          - echo "DB Host is $DB_HOST"
+          - echo "DB Port is $DB_PORT"
+          - echo "DB Name is $DB_NAME"
+          - echo "DB Name (test) is $DB_NAME_TEST"
+          - echo "DB User is $DB_USERNAME"
+          - echo "Rails ENV is $RAILS_ENV"
+          - apt-get update
+          - apt-get -y install nodejs npm
+          - gem install bundler
+          - bundle install
+          - bundle exec rails db:drop db:create db:migrate
+          - rspec
+
+definitions:
+  caches:
+    bundler: /usr/local/bundle
+  services:
+    postgres:
+      image: postgres:9.6
+      environment:
+        POSTGRES_DB: "walletapi_test"
+        POSTGRES_USER: "walletapi"
