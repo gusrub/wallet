@@ -103,7 +103,6 @@ RSpec.describe UsersController, type: :controller do
         user = User.create! valid_attributes
         put :update, params: params.merge({id: user.to_param, user: new_attributes}), session: valid_session
         user.reload
-        byebug
         expect(json[:first_name]).to eq(new_attributes[:first_name])
         expect(json[:last_name]).to eq(new_attributes[:last_name])
         expect(json[:email]).to eq(new_attributes[:email])
