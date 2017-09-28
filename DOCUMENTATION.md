@@ -104,13 +104,15 @@ Creates a new user with the given data. This endpoint is restricted to admin ope
 
 ```json
 {
-	"id": "1bf7c400-1a28-4480-9c99-4ff036f4d1dc",
-	"email": "john@example.com",
-	"first_name": "John",
-	"last_name": "Doe",
-	"role": "customer",
-	"status": "unconfirmed",
-	"created_at": "2017-09-25 21:41:12 -0700"
+    "id": "cbe467a9-9059-4a4c-ab84-93d9b453b901",
+    "email": "john@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "customer",
+    "status": "active",
+    "created_at": "2017-09-28T03:46:27.470Z",
+    "updated_at": "2017-09-28T03:46:27.470Z",
+    "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
 }
 ```
 
@@ -149,24 +151,28 @@ _None._
 
 ```json
 [
-	{
-		"id": "1bf7c400-1a28-4480-9c99-4ff036f4d1dc",
-		"email": "john@example.com",
-		"first_name": "John",
-		"last_name": "Doe",
-		"role": "customer",
-		"status": "unconfirmed",
-		"created_at": "2017-09-25 21:41:12 -0700"
-	},
-	{
-		"id": "a0dd2a0f-1312-4f8c-87c4-934c0a58e7f3",
-		"email": "jane@example.com",
-		"first_name": "Jane",
-		"last_name": "Smith",
-		"role": "admin",
-		"status": "active",
-		"created_at": "2017-09-25 21:41:12 -0700"
-	}
+    {
+        "id": "cbe467a9-9059-4a4c-ab84-93d9b453b901",
+        "email": "john01@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "role": "customer",
+        "status": "unconfirmed",
+        "created_at": "2017-09-28T03:46:27.470Z",
+        "updated_at": "2017-09-28T03:46:27.470Z",
+        "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
+    },
+    {
+        "id": "1b491220-028f-40e2-84be-cd9f9d5d93e6",
+        "email": "john02@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "role": "customer",
+        "status": "unconfirmed",
+        "created_at": "2017-09-28T03:46:39.938Z",
+        "updated_at": "2017-09-28T03:46:39.938Z",
+        "url": "https://walletapi.xyz/users/1b491220-028f-40e2-84be-cd9f9d5d93e6.json"
+    }
 ]
 ```
 
@@ -205,13 +211,15 @@ _None._
 
 ```json
 {
-	"id": "a0dd2a0f-1312-4f8c-87c4-934c0a58e7f3",
-	"email": "john@example.com",
-	"first_name": "John",
-	"last_name": "Doe",
-	"role": "customer",
-	"status": "unconfirmed",
-	"created_at": "2017-09-25 21:41:12 -0700"
+    "id": "cbe467a9-9059-4a4c-ab84-93d9b453b901",
+    "email": "john01@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "customer",
+    "status": "unconfirmed",
+    "created_at": "2017-09-28T03:46:27.470Z",
+    "updated_at": "2017-09-28T03:46:27.470Z",
+    "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
 }
 ```
 
@@ -260,13 +268,15 @@ Updates an existing user with the given data. This endpoint does not support upd
 
 ```json
 {
-	"id": "a0dd2a0f-1312-4f8c-87c4-934c0a58e7f3",
-	"email": "john@example.com",
-	"first_name": "John",
-	"last_name": "Doe",
-	"role": "customer",
-	"status": "unconfirmed",
-	"created_at": "2017-09-25 21:41:12 -0700"
+    "id": "cbe467a9-9059-4a4c-ab84-93d9b453b901",
+    "email": "john01@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "role": "customer",
+    "status": "disabled",
+    "created_at": "2017-09-28T03:46:27.470Z",
+    "updated_at": "2017-09-28T03:46:27.470Z",
+    "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
 }
 ```
 
@@ -812,26 +822,30 @@ Creates a new fee.
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[lower_range]** *Required*. The lower range for this fee.
- - **[upper_range]** *Required*. The upper range for this fee.
- - **[flat_fee]** *Required*. The flat fee for this range.
- - **[variable_rate]** *Required*. The variable rate fee.
+ - **fee[description]** *Required*. A unique name/description for this fee.
+ - **fee[lower_range]** *Required*. The lower range for this fee.
+ - **fee[upper_range]** *Required*. The upper range for this fee.
+ - **fee[flat_fee]** *Required*. The flat fee for this range.
+ - **fee[variable_fee]** *Required*. The variable rate fee.
 
 ### Payload
 
 ```json
 {
-	"lower_range": 0,
-	"upper_range": 1000.00,
-	"flat_fee": 8.00,
-	"variable_rate": 3.0
+	"fee": {
+		"description": "A unique name/description for this fee",
+		"lower_range": 0,
+		"upper_range": 1000.00,
+		"flat_fee": 8.00,
+		"variable_fee": 3.0
+	}
 }
 ```
 
@@ -841,12 +855,15 @@ Creates a new fee.
 
 ```json
 {
-	"uuid": "388175dc546c4c7f90d91121ebe83368",
-	"lower_range": 0,
-	"upper_range": 1000.00,
-	"flat_fee": 8.00,
-	"variable_rate": 3.0
-	"created_at": "2017-09-25 22:57:50 -0700"
+    "id": "8447fee2-7931-490c-a90e-e18b814bbe0e",
+    "description": "A unique name/description for this fee",
+    "lower_range": "0.0",
+    "upper_range": "1000.0",
+    "flat_fee": "8.0",
+    "variable_fee": "3.0",
+    "created_at": "2017-09-28T22:29:42.234Z",
+    "updated_at": "2017-09-28T22:29:42.234Z",
+    "url": "https://walletapi.xyz/fees/8447fee2-7931-490c-a90e-e18b814bbe0e.json"
 }
 ```
 
@@ -866,14 +883,14 @@ Lists all the fee ranges in the system. By default only the last 10 created reco
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[page]** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
+ - **page** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
 
 ### Payload
 
@@ -885,28 +902,34 @@ _None._
 
 ```json
 [
-	{
-		"uuid": "388175dc546c4c7f90d91121ebe83368",
-		"lower_range": 0,
-		"upper_range": 1000.00,
-		"flat_fee": 8.0,
-		"variable_rate": 3.0
-		"created_at": "2017-09-25 22:57:50 -0700"
-	},
-	{
-		"uuid": "9c7a0ace7d1d49e1bbde23018fc8d0b6",
-		"lower_range": 1001.00,
-		"upper_range": 5000.00,
-		"flat_fee": 20.00,
-		"variable_rate": 5.0
-		"created_at": "2017-09-25 22:57:50 -0700"
-	}
+    {
+        "id": "16f7373e-23ab-4b25-bc75-f73610a49be3",
+        "description": "2nd",
+        "lower_range": "1001.0",
+        "upper_range": "5000.0",
+        "flat_fee": "6.0",
+        "variable_fee": "2.5",
+        "created_at": "2017-09-28T04:20:52.648Z",
+        "updated_at": "2017-09-28T04:20:52.648Z",
+        "url": "https://walletapi.xyz/fees/16f7373e-23ab-4b25-bc75-f73610a49be3.json"
+    },
+    {
+        "id": "976f80f4-5987-4177-a53a-dd9a55e2d4ae",
+        "description": "3rd",
+        "lower_range": "5001.0",
+        "upper_range": "10000.0",
+        "flat_fee": "4.0",
+        "variable_fee": "2.0",
+        "created_at": "2017-09-28T04:21:30.380Z",
+        "updated_at": "2017-09-28T04:21:30.380Z",
+        "url": "https://walletapi.xyz/fees/976f80f4-5987-4177-a53a-dd9a55e2d4ae.json"
+    }
 ]
 ```
 
 #### Headers
 
- - **[X-Total-Pages]**. An integer containing the total amount of pages that the client can paginate through.
+ - **X-Total-Pages**. An integer containing the total amount of pages that the client can paginate through.
 
 ## Show
 
@@ -916,18 +939,18 @@ Returns the details for a fee.
 
 ### Request
 
-`GET /fees/:uuid`
+`GET /fees/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[uuid]** *Required*. The unique ID of the fee.
+ - **id** *Required*. The unique ID of the fee.
 
 ### Payload
 
@@ -939,12 +962,15 @@ _None._
 
 ```json
 {
-	"uuid": "388175dc546c4c7f90d91121ebe83368",
-	"lower_range": 0,
-	"upper_range": 1000.00,
-	"flat_fee": 8.00,
-	"variable_rate": 3.00
-	"created_at": "2017-09-25 22:57:50 -0700"
+    "id": "8447fee2-7931-490c-a90e-e18b814bbe0e",
+    "description": "Another description",
+    "lower_range": "0.0",
+    "upper_range": "1000.0",
+    "flat_fee": "8.0",
+    "variable_fee": "3.0",
+    "created_at": "2017-09-28T22:29:42.234Z",
+    "updated_at": "2017-09-28T22:35:54.865Z",
+    "url": "https://walletapi.xyz/fees/8447fee2-7931-490c-a90e-e18b814bbe0e.json"
 }
 ```
 
@@ -960,18 +986,18 @@ Removes a fee from the system.
 
 ### Request
 
-`DELETE /fees/:uuid`
+`DELETE /fees/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[uuid]** *Required.* The unique ID of the fee to delete.
+ - **id** *Required.* The unique ID of the fee to delete.
 
 ### Payload
 
@@ -995,30 +1021,35 @@ Updates an existing fee.
 
 ### Request
 
-`PATCH /fees/:uuid`
+`PATCH /fees/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[lower_range]** *Optional*. The lower range for this fee.
- - **[upper_range]** *Optional*. The upper range for this fee.
- - **[flat_fee]** *Optional*. The flat fee for this range.
- - **[variable_rate]** *Optional*. The variable rate fee.
+
+ - **fee[description]** *Optional*. A unique name/description for this fee.
+ - **fee[lower_range]** *Optional*. The lower range for this fee.
+ - **fee[upper_range]** *Optional*. The upper range for this fee.
+ - **fee[flat_fee]** *Optional*. The flat fee for this range.
+ - **fee[variable_rate]** *Optional*. The variable rate fee.
 
 ### Payload
 
 ```json
 {
-	"lower_range": 0,
-	"upper_range": 1000.00,
-	"flat_fee": 8.00,
-	"variable_rate": 4.5
+	"fee": {
+		"description": "Another description",
+		"lower_range": 0,
+		"upper_range": 1000.00,
+		"flat_fee": 8.00,
+		"variable_rate": 4.5
+	}
 }
 ```
 
@@ -1028,12 +1059,15 @@ Updates an existing fee.
 
 ```json
 {
-	"uuid": "388175dc546c4c7f90d91121ebe83368",
-	"lower_range": 0,
-	"upper_range": 1000.00,
-	"flat_fee": 8.00,
-	"variable_rate": 4.5
-	"created_at": "2017-09-25 22:57:50 -0700"
+    "id": "8447fee2-7931-490c-a90e-e18b814bbe0e",
+    "description": "Another description",
+    "lower_range": "0.0",
+    "upper_range": "1000.0",
+    "flat_fee": "8.0",
+    "variable_fee": "3.0",
+    "created_at": "2017-09-28T22:29:42.234Z",
+    "updated_at": "2017-09-28T22:35:54.865Z",
+    "url": "https://walletapi.xyz/fees/8447fee2-7931-490c-a90e-e18b814bbe0e.json"
 }
 ```
 
