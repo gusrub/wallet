@@ -105,7 +105,6 @@ RSpec.describe UsersController, type: :controller do
         user.reload
         expect(json[:first_name]).to eq(new_attributes[:first_name])
         expect(json[:last_name]).to eq(new_attributes[:last_name])
-        expect(json[:email]).to eq(new_attributes[:email])
         expect(json[:role]).to eq(new_attributes[:role])
         expect(json[:status]).to eq(new_attributes[:status])
       end

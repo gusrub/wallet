@@ -69,30 +69,32 @@ Creates a new user with the given data. This endpoint is restricted to admin ope
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[email]** *Required*. The email of the new user account to create.
- - **[password]** *Optional*. A temporary password for the newly created user. If none is set, a random password will be generated.
- - **[first_name]** *Required.* The new user's first name.
- - **[last_name]** *Required.* The new user's last name.
- - **[role]** *Optional.* Role for the new user. This can be either `customer` or `admin`. If none is given it will fallback to a customer.
- - **[status]** *Optional.* The status of the user once created. Can be any of `active` to immediately have the user activated _(useful when providing password)_ `unconfirmed` if the user requires confirmation by email or `disabled` to create the user but have the account disabled to interact with the API. Fallsback to `unconfirmed` if none given.
+ - **user[email]** *Required*. The email of the new user account to create.
+ - **user[password]** *Optional*. A temporary password for the newly created user. If none is set, a random password will be generated.
+ - **user[first_name]** *Required.* The new user's first name.
+ - **user[last_name]** *Required.* The new user's last name.
+ - **user[role]** *Optional.* Role for the new user. This can be either `customer` or `admin`. If none is given it will fallback to a customer.
+ - **user[status]** *Optional.* The status of the user once created. Can be any of `active` to immediately have the user activated _(useful when providing password)_ `unconfirmed` if the user requires confirmation by email or `disabled` to create the user but have the account disabled to interact with the API. Fallsback to `unconfirmed` if none given.
 
 ### Payload
 
 ```json
 {
-	"email": "john@example.com",
-	"password": "S3cur3Pwd!",
-	"first_name": "John",
-	"last_name": "Doe",
-	"role": "customer",
-	"status": "active"
+	"user": {
+		"email": "john@example.com",
+		"password": "S3cur3Pwd!",
+		"first_name": "John",
+		"last_name": "Doe",
+		"role": "customer",
+		"status": "active"
+	}
 }
 ```
 
@@ -102,7 +104,7 @@ Creates a new user with the given data. This endpoint is restricted to admin ope
 
 ```json
 {
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
+	"id": "1bf7c400-1a28-4480-9c99-4ff036f4d1dc",
 	"email": "john@example.com",
 	"first_name": "John",
 	"last_name": "Doe",
@@ -128,14 +130,14 @@ Lists current users in the system. Both `customer` and `admin` types. By default
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[page]** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
+ - **page** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
 
 ### Payload
 
@@ -148,7 +150,7 @@ _None._
 ```json
 [
 	{
-		"uuid": "d31d73573a034830a1c6a995c4221d8d",
+		"id": "1bf7c400-1a28-4480-9c99-4ff036f4d1dc",
 		"email": "john@example.com",
 		"first_name": "John",
 		"last_name": "Doe",
@@ -157,7 +159,7 @@ _None._
 		"created_at": "2017-09-25 21:41:12 -0700"
 	},
 	{
-		"uuid": "7abeb64303b74fea8bb6e644913459cb",
+		"id": "a0dd2a0f-1312-4f8c-87c4-934c0a58e7f3",
 		"email": "jane@example.com",
 		"first_name": "Jane",
 		"last_name": "Smith",
@@ -170,28 +172,28 @@ _None._
 
 #### Headers
 
- - **[X-Total-Pages]**. An integer containing the total amount of pages that the client can paginate through.
+ - **X-Total-Pages**. An integer containing the total amount of pages that the client can paginate through.
 
 ## Show
 
 > Roles: **admin**, **customer**
 
-Returns the details of a certain user. If the given user uuid is not the client's request user and the client's request user is a customer a `401 unauthorized` http error will be returned. Only admin users can retrieve details for all other users.
+Returns the details of a certain user. If the given user id is not the client's request user and the client's request user is a customer a `401 unauthorized` http error will be returned. Only admin users can retrieve details for all other users.
 
 ### Request
 
-`GET /users/:uuid`
+`GET /users/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[uuid]** *Required*. The unique ID of the user to retrieve.
+ - **id** *Required*. The unique ID of the user to retrieve.
 
 ### Payload
 
@@ -203,7 +205,7 @@ _None._
 
 ```json
 {
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
+	"id": "a0dd2a0f-1312-4f8c-87c4-934c0a58e7f3",
 	"email": "john@example.com",
 	"first_name": "John",
 	"last_name": "Doe",
@@ -225,21 +227,21 @@ Updates an existing user with the given data. This endpoint does not support upd
 
 ### Request
 
-`PATCH /users/:uuid`
+`PATCH /users/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[first_name]** *Optional.* The updated user first name.
- - **[last_name]** *Optional.* The updated user last name.
- - **[role]** *Optional.* Role for the updated user. This can be either `customer` or `admin`.
- - **[status]** *Optional.* The status of the user. Can be any of `active`, `unconfirmed` if the user requires confirmation by email or `disabled` to disable the user.
+ - **user[first_name]** *Optional.* The updated user first name.
+ - **user[last_name]** *Optional.* The updated user last name.
+ - **user[role]** *Optional.* Role for the updated user. This can be either `customer` or `admin`.
+ - **user[status]** *Optional.* The status of the user. Can be any of `active`, `unconfirmed` if the user requires confirmation by email or `disabled` to disable the user.
 
 ### Payload
 
@@ -258,7 +260,7 @@ Updates an existing user with the given data. This endpoint does not support upd
 
 ```json
 {
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
+	"id": "a0dd2a0f-1312-4f8c-87c4-934c0a58e7f3",
 	"email": "john@example.com",
 	"first_name": "John",
 	"last_name": "Doe",
@@ -280,18 +282,18 @@ Removes an existing user from the system. This endpoint is only accesible by `ad
 
 ### Request
 
-`DELETE /users/:uuid`
+`DELETE /users/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[uuid]** *Required.* The unique ID of the user to delete.
+ - **id** *Required.* The unique ID of the user to delete.
 
 ### Payload
 
