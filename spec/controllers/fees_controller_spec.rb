@@ -23,34 +23,39 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe UsersController, type: :controller do
+RSpec.describe FeesController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
-  # User. As you add validations to User, be sure to
+  # Fee. As you add validations to Fee, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.attributes_for(:user)
+    FactoryGirl.attributes_for(:fee)
   }
 
   let(:invalid_attributes) {
     {
-      first_name: nil,
-      last_name: nil,
-      email: nil,
-      password: nil,
-      role: nil,
-      status: nil
+      description: nil,
+      lower_range: nil,
+      upper_range: nil,
+      flat_fee: nil,
+      variable_fee: nil
     }
   }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # UsersController. Be sure to keep this updated too.
+  # FeesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
   let(:params) { { format: :json } }
 
   describe "GET #index" do
-    let!(:resource) { FactoryGirl.create_list(:user, 16) }
+    let!(:resource) do
+      FactoryGirl.create(:fee, description: "Fee 1", lower_range: 0, upper_range: 1000, flat_fee: 8, variable_fee: 3)
+      FactoryGirl.create(:fee, description: "Fee 2", lower_range: 1001, upper_range: 5000, flat_fee: 6, variable_fee: 2.5)
+      FactoryGirl.create(:fee, description: "Fee 3", lower_range: 5001, upper_range: 10000, flat_fee: 4, variable_fee: 2)
+      FactoryGirl.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
+      Fee.all
+    end
     subject { get :index, params: params, session: valid_session }
 
     it_behaves_like "paginated endpoint"
@@ -62,33 +67,33 @@ RSpec.describe UsersController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      user = User.create! valid_attributes
-      get :show, params: params.merge({id: user.to_param}), session: valid_session
+      fee = Fee.create! valid_attributes
+      get :show, params: params.merge({id: fee.to_param}), session: valid_session
       expect(response).to be_success
     end
   end
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new User" do
+      it "creates a new Fee" do
         expect {
-          post :create, params: params.merge({user: valid_attributes}), session: valid_session
-        }.to change(User, :count).by(1)
+          post :create, params: params.merge({fee: valid_attributes}), session: valid_session
+        }.to change(Fee, :count).by(1)
       end
 
-      it "renders a JSON response with the new user" do
+      it "renders a JSON response with the new fee" do
 
-        post :create, params: params.merge({user: valid_attributes}), session: valid_session
+        post :create, params: params.merge({fee: valid_attributes}), session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(user_url(User.last))
+        expect(response.location).to eq(fee_url(Fee.last))
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the new user" do
+      it "renders a JSON response with errors for the new fee" do
 
-        post :create, params: params.merge({user: invalid_attributes}), session: valid_session
+        post :create, params: params.merge({fee: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -98,33 +103,30 @@ RSpec.describe UsersController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        FactoryGirl.attributes_for :user
+        { description: "Another one" }
       }
 
-      it "updates the requested user" do
-        user = User.create! valid_attributes
-        put :update, params: params.merge({id: user.to_param, user: new_attributes}), session: valid_session
-        user.reload
-        expect(json[:first_name]).to eq(new_attributes[:first_name])
-        expect(json[:last_name]).to eq(new_attributes[:last_name])
-        expect(json[:role]).to eq(new_attributes[:role])
-        expect(json[:status]).to eq(new_attributes[:status])
+      it "updates the requested fee" do
+        fee = Fee.create! valid_attributes
+        put :update, params: params.merge({id: fee.to_param, fee: new_attributes}), session: valid_session
+        fee.reload
+        expect(json[:description]).to eq(new_attributes[:description])
       end
 
-      it "renders a JSON response with the user" do
-        user = User.create! valid_attributes
+      it "renders a JSON response with the fee" do
+        fee = Fee.create! valid_attributes
 
-        put :update, params: params.merge({id: user.to_param, user: new_attributes}), session: valid_session
+        put :update, params: params.merge({id: fee.to_param, fee: new_attributes}), session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the user" do
-        user = User.create! valid_attributes
+      it "renders a JSON response with errors for the fee" do
+        fee = Fee.create! valid_attributes
 
-        put :update, params: params.merge({id: user.to_param, user: invalid_attributes}), session: valid_session
+        put :update, params: params.merge({id: fee.to_param, fee: invalid_attributes}), session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -132,11 +134,11 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested user" do
-      user = User.create! valid_attributes
+    it "destroys the requested fee" do
+      fee = Fee.create! valid_attributes
       expect {
-        delete :destroy, params: params.merge({id: user.to_param}), session: valid_session
-      }.to change(User, :count).by(-1)
+        delete :destroy, params: params.merge({id: fee.to_param}), session: valid_session
+      }.to change(Fee, :count).by(-1)
     end
   end
 

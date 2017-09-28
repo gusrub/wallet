@@ -15,8 +15,8 @@ RSpec.shared_examples "paginated endpoint" do
     expect(actual_pages).to eq(returned_pages)
   end
 
-  it "should return only #{ENV['MAX_RECORDS_PER_PAGE']} records per page" do
+  it "should return only #{ENV['MAX_RECORDS_PER_PAGE']} or less records per page" do
     max_records = ENV["MAX_RECORDS_PER_PAGE"].to_i
-    expect(json.count).to eq(max_records)
+    expect(json.count).to be <= max_records
   end  
 end
