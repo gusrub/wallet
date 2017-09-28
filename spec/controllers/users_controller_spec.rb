@@ -51,9 +51,12 @@ RSpec.describe UsersController, type: :controller do
   let(:params) { { format: :json } }
 
   describe "GET #index" do
+    let!(:resource) { FactoryGirl.create_list(:user, 16) }
+    subject { get :index, params: params, session: valid_session }
+
+    it_behaves_like "paginated endpoint"
     it "returns a success response" do
-      user = User.create! valid_attributes
-      get :index, params: params, session: valid_session
+      subject
       expect(response).to be_success
     end
   end

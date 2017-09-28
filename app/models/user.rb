@@ -1,5 +1,7 @@
 class User < ApplicationRecord
 
+  include Concerns::Paginable
+
   has_secure_password
 
   enum role: {
