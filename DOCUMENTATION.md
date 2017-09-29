@@ -645,34 +645,38 @@ Creates a new card with the given data. Card will be tested against issuer for v
 
 ### Request
 
-`POST /users/:user_uuid/cards`
+`POST /users/:user_id/cards`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[name_on_card]** *Required*. The name as it appears in the card.
- - **[number]** *Required*. Card number digits.
- - **[csc]** *Required*. Card security code.
- - **[expiration_year]** *Required*. Card expiration year.
- - **[expiration_month]** *Required*. Card expiration month.
- - **[type]** *Required.* Can be either `debit` or `credit`.
+ - **card[name_on_card]** *Required*. The name as it appears in the card.
+ - **card[number]** *Required*. Card number digits.
+ - **card[csc]** *Required*. Card security code.
+ - **card[expiration_year]** *Required*. Card expiration year.
+ - **card[expiration_month]** *Required*. Card expiration month.
+ - **card[card_type]** *Required.* Can be either `debit` or `credit`.
+ - **card[issuer]** *Required.* The issuer of the card which can be one of the following: `visa`, `mastercard`, `amex`, `dinners` or `discover`.
 
 ### Payload
 
 ```json
 {
-	"name_on_card": "John Doe",
-	"number": "4111111111111111",
-	"csc": "123",
-	"expiration_year": "2020",
-	"expiration_month": "06",
-	"type": "credit"
+    "card": {
+        "name_on_card": "John Doe",
+        "number": "4111111111111111",
+        "csc": "123",
+        "expiration_year": "2020",
+        "expiration_month": "06",
+        "card_type": "credit",
+        "issuer": "visa"
+    }
 }
 ```
 
@@ -682,14 +686,14 @@ Creates a new card with the given data. Card will be tested against issuer for v
 
 ```json
 {
-	"uuid": "a72bcca65e8d422b96d3ad5cffe92373",
-	"last_4": "1111",
-	"type": "credit",
-	"expiration_year": "2020",
-	"expiration_month": "06",
-	"issuer": "visa",
-	"status": "active",
-	"created_at": "2017-09-25 22:57:50 -0700"
+    "id": "473c3d1f-b4bd-4dfe-84b8-e09a5188efd4",
+    "last_4": "1111",
+    "card_type": "credit",
+    "issuer": "visa",
+    "status": "active",
+    "expiration_year": "2020",
+    "expiration_month": "06",
+    "url": "https://walletapi.xyz/users/1b491220-028f-40e2-84be-cd9f9d5d93e6/cards/473c3d1f-b4bd-4dfe-84b8-e09a5188efd4.json"
 }
 ```
 
@@ -705,19 +709,19 @@ Lists all the active cards for the given user. If the requesting client is a `cu
 
 ### Request
 
-`GET /users/:user_uuid/cards`
+`GET /users/:user_id/cards`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[user_uuid]** *Required*. The unique ID of the user whose cards are to be retrieved.
- - **[page]** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
+ - **user_id** *Required*. The unique ID of the user whose cards are to be retrieved.
+ - **page** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
 
 ### Payload
 
@@ -729,32 +733,32 @@ _None._
 
 ```json
 [
-	{
-		"uuid": "a72bcca65e8d422b96d3ad5cffe92373",
-		"last_4": "1111",
-		"type": "credit",
-		"expiration_year": "2020",
-		"expiration_month": "06",
-		"issuer": "visa",
-		"status": "active",
-		"created_at": "2017-09-25 22:57:50 -0700"
-	},
-	{
-		"uuid": "55a78a5d81664ffb8bfeb8125512bcc2",
-		"last_4": "5100",
-		"type": "debit",
-		"expiration_year": "2021",
-		"expiration_month": "11",
-		"issuer": "mastercard",
-		"status": "removed",
-		"created_at": "2017-09-25 22:57:50 -0700"
-	}
+    {
+        "id": "ba527302-9684-4f51-8858-a52214df4e95",
+        "last_4": "1111",
+        "card_type": "credit",
+        "issuer": "visa",
+        "status": "active",
+        "expiration_year": "2018",
+        "expiration_month": "09",
+        "url": "https://walletapi.xyz/users/1b491220-028f-40e2-84be-cd9f9d5d93e6/cards/ba527302-9684-4f51-8858-a52214df4e95.json"
+    },
+    {
+        "id": "63b7243a-9769-4c15-afad-d7ee4506783d",
+        "last_4": "1111",
+        "card_type": "credit",
+        "issuer": "visa",
+        "status": "active",
+        "expiration_year": "2020",
+        "expiration_month": "06",
+        "url": "https://walletapi.xyz/users/1b491220-028f-40e2-84be-cd9f9d5d93e6/cards/63b7243a-9769-4c15-afad-d7ee4506783d.json"
+    }
 ]
 ```
 
 #### Headers
 
- - **[X-Total-Pages]**. An integer containing the total amount of pages that the client can paginate through.
+ - **X-Total-Pages**. An integer containing the total amount of pages that the client can paginate through.
 
 ## Show
 
@@ -764,19 +768,19 @@ Returns the details of a certain transaction. If the given user uuid is not the 
 
 ### Request
 
-`GET /users/:user_uuid/cards/:uuid`
+`GET /users/:user_id/cards/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[user_uuid]** *Required*. The unique ID of the user whose card is to be retrieved.
- - **[uuid]** *Required*. The unique ID of the user card.
+ - **user_id** *Required*. The unique ID of the user whose card is to be retrieved.
+ - **id** *Required*. The unique ID of the user card.
 
 ### Payload
 
@@ -788,14 +792,14 @@ _None._
 
 ```json
 {
-	"uuid": "a72bcca65e8d422b96d3ad5cffe92373",
-	"last_4": "1111",
-	"type": "credit",
-	"expiration_year": "2020",
-	"expiration_month": "06",
-	"issuer": "visa",
-	"status": "active",
-	"created_at": "2017-09-25 22:57:50 -0700"
+    "id": "ba527302-9684-4f51-8858-a52214df4e95",
+    "last_4": "1111",
+    "card_type": "credit",
+    "issuer": "visa",
+    "status": "active",
+    "expiration_year": "2018",
+    "expiration_month": "09",
+    "url": "https://walletapi.xyz/users/1b491220-028f-40e2-84be-cd9f9d5d93e6/cards/ba527302-9684-4f51-8858-a52214df4e95.json"
 }
 ```
 
@@ -811,19 +815,19 @@ Removes an existing card from a user on the system. If there are any transaction
 
 ### Request
 
-`DELETE /users/:user_uuid/cards/:uuid`
+`DELETE /users/:user_id/cards/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[user_uuid]** *Required.* The unique ID of the user to whose card is to be removed.
- - **[uuid]** *Required.* The unique ID of the user's card to delete.
+ - **user_id** *Required.* The unique ID of the user to whose card is to be removed.
+ - **id** *Required.* The unique ID of the user's card to delete.
 
 ### Payload
 
