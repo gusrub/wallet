@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170929034424) do
+ActiveRecord::Schema.define(version: 20170929053658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,19 @@ ActiveRecord::Schema.define(version: 20170929034424) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_accounts_on_user_id"
+  end
+
+  create_table "cards", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "last_4"
+    t.string "bank_token"
+    t.integer "card_type"
+    t.string "issuer"
+    t.integer "status"
+    t.date "expiration"
+    t.uuid "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_cards_on_user_id"
   end
 
   create_table "fees", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -57,5 +70,6 @@ ActiveRecord::Schema.define(version: 20170929034424) do
   end
 
   add_foreign_key "accounts", "users"
+  add_foreign_key "cards", "users"
   add_foreign_key "tokens", "users"
 end
