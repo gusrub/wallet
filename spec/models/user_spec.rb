@@ -15,4 +15,8 @@ RSpec.describe User, type: :model do
     it { should validate_length_of(:password).is_at_least(8).on(:create) }
   end
 
+  describe :associations do
+    it { is_expected.to have_many(:tokens) }
+  end
+
 end
