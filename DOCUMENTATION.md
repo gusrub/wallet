@@ -64,7 +64,7 @@ The users endpoints allow interaction with user type resources and can be used t
 
 > Roles: **admin**
 
-Creates a new user with the given data. This endpoint is restricted to admin operations.
+Creates a new user with the given data. This endpoint is restricted to admin operations. By default, when creating a new user a new wallet account will be created as well with a balance of 0.
 
 ### Request
 
@@ -108,13 +108,20 @@ Creates a new user with the given data. This endpoint is restricted to admin ope
 ```json
 {
     "id": "cbe467a9-9059-4a4c-ab84-93d9b453b901",
-    "email": "john@example.com",
+    "email": "john01@example.com",
     "first_name": "John",
     "last_name": "Doe",
     "role": "customer",
-    "status": "active",
+    "status": "unconfirmed",
     "created_at": "2017-09-28T03:46:27.470Z",
     "updated_at": "2017-09-28T03:46:27.470Z",
+    "account": {
+        "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e",
+        "balance": "0.0",
+        "account_type": "customer",
+        "created_at": "2017-09-29T03:56:39.408Z",
+        "updated_at": "2017-09-29T03:56:39.408Z"
+    },
     "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
 }
 ```
@@ -163,6 +170,13 @@ _None._
         "status": "unconfirmed",
         "created_at": "2017-09-28T03:46:27.470Z",
         "updated_at": "2017-09-28T03:46:27.470Z",
+        "account": {
+            "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e",
+            "balance": "0.0",
+            "account_type": "customer",
+            "created_at": "2017-09-29T03:56:39.408Z",
+            "updated_at": "2017-09-29T03:56:39.408Z"
+        },
         "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
     },
     {
@@ -174,6 +188,13 @@ _None._
         "status": "unconfirmed",
         "created_at": "2017-09-28T03:46:39.938Z",
         "updated_at": "2017-09-28T03:46:39.938Z",
+        "account": {
+            "id": "3785f7f3-d2e1-4691-a288-6742aa7fbfe0",
+            "balance": "0.0",
+            "account_type": "customer",
+            "created_at": "2017-09-29T03:52:19.565Z",
+            "updated_at": "2017-09-29T03:52:19.565Z"
+        },
         "url": "https://walletapi.xyz/users/1b491220-028f-40e2-84be-cd9f9d5d93e6.json"
     }
 ]
@@ -222,6 +243,13 @@ _None._
     "status": "unconfirmed",
     "created_at": "2017-09-28T03:46:27.470Z",
     "updated_at": "2017-09-28T03:46:27.470Z",
+    "account": {
+        "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e",
+        "balance": "0.0",
+        "account_type": "customer",
+        "created_at": "2017-09-29T03:56:39.408Z",
+        "updated_at": "2017-09-29T03:56:39.408Z"
+    },
     "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
 }
 ```
@@ -279,6 +307,13 @@ Updates an existing user with the given data. This endpoint does not support upd
     "status": "disabled",
     "created_at": "2017-09-28T03:46:27.470Z",
     "updated_at": "2017-09-28T03:46:27.470Z",
+    "account": {
+        "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e",
+        "balance": "0.0",
+        "account_type": "customer",
+        "created_at": "2017-09-29T03:56:39.408Z",
+        "updated_at": "2017-09-29T03:56:39.408Z"
+    },
     "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901.json"
 }
 ```

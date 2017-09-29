@@ -16,7 +16,8 @@ RSpec.describe User, type: :model do
   end
 
   describe :associations do
-    it { is_expected.to have_many(:tokens) }
+    it { is_expected.to have_many(:tokens).dependent(:destroy) }
+    it { is_expected.to have_one(:account).dependent(:destroy) }
   end
 
 end
