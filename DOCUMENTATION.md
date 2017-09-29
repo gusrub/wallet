@@ -21,17 +21,21 @@ _None._
 
 ### Parameters
 
- - **[type]** *Required.* The type of the token to request. Can be either `session` or `password_reset`.
- - **[email]** *Required.* Email of the user to create the token for.
- - **[password]** *Optional.* Password for the user requesting the token. Only necessary when requesting a `session` type of token.
+ - **token[type]** *Required.* The type of the token to request. Can be either `session` or `password_reset`.
+ - **token[user][email]** *Required.* Email of the user to create the token for.
+ - **token[user][password]** *Optional.* Password for the user requesting the token. Only necessary when requesting a `session` type of token.
 
 ### Payload
 
 ```json
 {
-	"type": "session",
-	"email": "john@example.com",
-	"password": "S3cur3Pwd!"
+    "token": {
+        "token_type": "session",
+        "user": {
+            "email": "john07@example.com",
+            "password": "Testing@123!"
+        }
+    }
 }
 ```
 
@@ -41,11 +45,10 @@ _None._
 
 ```json
 {
-	"token": "pX27zsMN2ViQKta1bGfLmVJE",
-	"type": "session",
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
-	"created_at": "2017-09-25 21:41:12 -0700",
-	"expires_at": "2017-09-25 22:41:12 -0700"
+    "token": "8taehCMah79rgdWkkvTMgjbz",
+    "token_type": "session",
+    "expires_at": "2017-09-30T00:33:42.648Z",
+    "url": "https://walletapi.xyz/tokens/2bc2844a-0b3a-4c53-beaa-2bf5e2eaf37b.json"
 }
 ```
 
@@ -346,7 +349,7 @@ Since transactions are related to real money they cannot be deleted once they ha
 
 > Roles: **admin**, **customer**
 
-Creates a new transaction for the given type and the given amount. This transaction is executed on behalf of the user passed as parameter so if the calling client is not the user of the resource the endpoint will return a `401 unauthorized` http error unless the calling client is an `admin` 
+Creates a new transaction for the given type and the given amount. This transaction is executed on behalf of the user passed as parameter so if the calling client is not the user of the resource the endpoint will return a `401 unauthorized` http error unless the calling client is an `admin`
 
 In order to create transactions the client must provide the type of transaction that needs to be executed which is limited to the ones that are available to wallets being:
 
@@ -356,7 +359,7 @@ In order to create transactions the client must provide the type of transaction 
 
 The other two types are not available for use, that is `flat_fee` and `variable_fee` since they are created or triggered by other transactions automatically. These are not even available for admin users.
 
-Depending on the type of transaction the client must provide the ID of a _"transactionable"_ object which can be either a wallet from another user for transfers between users or a card from the calling client in case of a deposit or withdrawal. Naturally, a client can only transfer money from his/her wallet to another and not the other way around and can also only withdraw from or deposit to his/her own cards. 
+Depending on the type of transaction the client must provide the ID of a _"transactionable"_ object which can be either a wallet from another user for transfers between users or a card from the calling client in case of a deposit or withdrawal. Naturally, a client can only transfer money from his/her wallet to another and not the other way around and can also only withdraw from or deposit to his/her own cards.
 
 For operations that involve interaction with 3rd parties such as other banks if a problem occurs on the third party a `502 bad gateway` error will be returned. This is a possible scenario if there is a downtime or connection problem to the credit or debit card issuer. Also note that insuficient funds or problems with the account itself do not account as gateway problems.
 
@@ -477,7 +480,7 @@ _None._
 		"reference": "d31d73573a034830a1c6a995c4221d8d",
 		"balance": 1962.00,
 		"created_at": "2017-09-25 21:41:12 -0700"
-	}	
+	}
 ]
 ```
 
@@ -603,7 +606,7 @@ Lastly, if the card has been already involved in transactions a _soft delete_ is
 
 > Roles: **admin**, **customer**
 
-Creates a new card with the given data. Card will be tested against issuer for validity when added but not for funds as no charge will be done. A card can be either a credit or debit card. 
+Creates a new card with the given data. Card will be tested against issuer for validity when added but not for funds as no charge will be done. A card can be either a credit or debit card.
 
 ### Request
 

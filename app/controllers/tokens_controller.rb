@@ -23,7 +23,7 @@ class TokensController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def token_params
-      params.require(:token).permit(:token_type, user: :email)
+      params.require(:token).permit(:token_type, user: [:email, :password])
     end
 
     def set_token
