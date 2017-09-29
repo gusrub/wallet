@@ -83,6 +83,13 @@ RSpec.describe UsersController, type: :controller do
         expect(response.content_type).to eq('application/json')
         expect(response.location).to eq(user_url(User.last))
       end
+
+      it "creates a default account for the user" do
+        expect {
+          post :create, params: params.merge({user: valid_attributes}), session: valid_session
+        }.to change(Account, :count).by(1)
+        expect(json).to include(:account)
+      end
     end
 
     context "with invalid params" do

@@ -16,7 +16,9 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+    # TODO: move this to a service
     @user = User.new(create_user_params)
+    @user.build_account(balance: 0, account_type: Account.account_types[:customer])
 
     if @user.save
       render :show, status: :created, location: @user

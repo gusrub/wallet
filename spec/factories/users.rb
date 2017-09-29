@@ -6,5 +6,8 @@ FactoryGirl.define do
     last_name { Faker::Name.last_name }
     role 'customer'
     status 'active'
+    after(:build) do |user|
+      user.account ||= FactoryGirl.build(:account, user: user)
+    end
   end
 end

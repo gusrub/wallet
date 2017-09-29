@@ -2,7 +2,8 @@ class User < ApplicationRecord
 
   include Concerns::Paginable
 
-  has_many :tokens
+  has_many :tokens, dependent: :destroy
+  has_one :account, dependent: :destroy
 
   has_secure_password
 
