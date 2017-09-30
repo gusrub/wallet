@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170929053658) do
+ActiveRecord::Schema.define(version: 20170930030244) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,22 @@ ActiveRecord::Schema.define(version: 20170929053658) do
     t.index ["user_id"], name: "index_tokens_on_user_id"
   end
 
+  create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2
+    t.integer "transaction_type"
+    t.string "transferable_type"
+    t.uuid "user_id"
+    t.decimal "user_balance", precision: 10, scale: 2
+    t.decimal "transferable_balance", precision: 10, scale: 2
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "reference_id"
+    t.uuid "transferable_id"
+    t.index ["reference_id"], name: "index_transactions_on_reference_id"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
@@ -72,4 +88,5 @@ ActiveRecord::Schema.define(version: 20170929053658) do
   add_foreign_key "accounts", "users"
   add_foreign_key "cards", "users"
   add_foreign_key "tokens", "users"
+  add_foreign_key "transactions", "users"
 end

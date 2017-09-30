@@ -394,7 +394,7 @@ In order to create transactions the client must provide the type of transaction 
 
 The other two types are not available for use, that is `flat_fee` and `variable_fee` since they are created or triggered by other transactions automatically. These are not even available for admin users.
 
-Depending on the type of transaction the client must provide the ID of a _"transactionable"_ object which can be either a wallet from another user for transfers between users or a card from the calling client in case of a deposit or withdrawal. Naturally, a client can only transfer money from his/her wallet to another and not the other way around and can also only withdraw from or deposit to his/her own cards.
+Depending on the type of transaction the client must provide the ID of a _"transferable"_ object which can be either a wallet from another user for transfers between users or a card from the calling client in case of a deposit or withdrawal. Naturally, a client can only transfer money from his/her wallet to another and not the other way around and can also only withdraw from or deposit to his/her own cards.
 
 For operations that involve interaction with 3rd parties such as other banks if a problem occurs on the third party a `502 bad gateway` error will be returned. This is a possible scenario if there is a downtime or connection problem to the credit or debit card issuer. Also note that insuficient funds or problems with the account itself do not account as gateway problems.
 
@@ -402,32 +402,34 @@ Finally, an important thing to consider is that the calling client must have eno
 
 ### Request
 
-`POST /users/:uuid/transactions`
+`POST /users/:user_id/transactions`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[amount]** *Required*. The amount to be transfered to the other account.
- - **[type]** *Required*. The type of transaction desired. Can be either `transfer`, `deposit` or `withdrawal`.
- - **[description]** *Optional*. A user description of the reason of the operation. For statement purposes.
- - **[transactionable][uuid]** *Required.* The unique ID of the transactionable object which can be a `card` or `wallet`.
+ - **transaction[amount]** *Required*. The amount to be transfered to the other account.
+ - **transaction[transaction_type]** *Required*. The type of transaction desired. Can be either `transfer`, `deposit` or `withdrawal`.
+ - **transaction[description]** *Optional*. A user description of the reason of the operation. For statement purposes.
+ - **transaction[transferable][id]** *Required.* The unique ID of the transferable object which can be a `card` or `wallet` depending on the `transaction_type`.
 
 ### Payload
 
 ```json
 {
-	"amount": 1500.00,
-	"type": "transfer",
-	"description": "Payment for service",
-	"transactionable" : {
-		"uuid" : "210c9ff2a2134d2e982baee5d694cce3"
-	}
+    "transaction": {
+        "amount": 2000,
+        "transaction_type": "transfer",
+        "description": "A test transfer",
+        "transferable": {
+            "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e"
+        }
+    }
 }
 ```
 
@@ -437,16 +439,17 @@ Finally, an important thing to consider is that the calling client must have eno
 
 ```json
 {
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
-	"amount": 1500.00,
-	"type": "transfer",
-	"description": "Payment for service",
-	"transactionable" : {
-		"uuid" : "210c9ff2a2134d2e982baee5d694cce3"
-	}
-	"reference": null,
-	"balance": 25000.00,
-	"created_at": "2017-09-25 21:41:12 -0700"
+    "id": "94801348-a654-4d5d-b575-8be507fc6fd1",
+    "amount": "2000.0",
+    "type": "transfer",
+    "description": "A test transfer",
+    "reference": null,
+    "balance": "0.0",
+    "created_at": "2017-09-30T03:45:59.996Z",
+    "transferable": {
+        "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e"
+    },
+    "url": "https://walletapi.xyz/users/cbe467a9-9059-4a4c-ab84-93d9b453b901/transactions/94801348-a654-4d5d-b575-8be507fc6fd1.json"
 }
 ```
 
@@ -462,19 +465,19 @@ Lists the transactions for the given user. By default only the last 10 created r
 
 ### Request
 
-`GET /users/:user_uuid/transations`
+`GET /users/:user_id/transations`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[user_uuid]** *Required*. The unique ID of the user whose transactions are to be retrieved.
- - **[page]** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
+ - **user_id** *Required*. The unique ID of the user whose transactions are to be retrieved.
+ - **page** *Optional*. If set, will pull records for the given page. The response `X-Total-Pages` value can be used to discover how many pages are.
 
 ### Payload
 
@@ -486,42 +489,45 @@ _None._
 
 ```json
 [
-	{
-		"uuid": "d31d73573a034830a1c6a995c4221d8d",
-		"amount": 1000.00,
-		"type": "transfer",
-		"description": "Payment for service",
-		"transactionable" : {
-			"uuid" : "210c9ff2a2134d2e982baee5d694cce3"
-		}
-		"reference": null,
-		"balance": 2000.00,
-		"created_at": "2017-09-25 21:41:12 -0700"
-	},
-	{
-		"uuid": "7564f3279cd64e0f999c33d45866e676",
-		"amount": 8.00,
-		"type": "flat_fee",
-		"description": "Transfer flat fee",
-		"reference": "d31d73573a034830a1c6a995c4221d8d",
-		"balance": 1992.00,
-		"created_at": "2017-09-25 21:41:12 -0700"
-	},
-	{
-		"uuid": "7564f3279cd64e0f999c33d45866e676",
-		"amount": 30.00,
-		"type": "flat_fee",
-		"description": "Variable fee (3%)",
-		"reference": "d31d73573a034830a1c6a995c4221d8d",
-		"balance": 1962.00,
-		"created_at": "2017-09-25 21:41:12 -0700"
-	}
+    {
+        "id": "78c7b0d1-7148-41d6-9d44-7edc7ae81390",
+        "amount": "1000.0",
+        "type": "transfer",
+        "description": "A test transfer",
+        "reference": null,
+        "balance": "2000.0",
+        "created_at": "2017-09-30T03:48:26.228Z",
+        "transferable": {
+            "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e"
+        },
+        "url": "http://localhost:3000/users/cbe467a9-9059-4a4c-ab84-93d9b453b901/transactions/78c7b0d1-7148-41d6-9d44-7edc7ae81390.json"
+    },
+    {
+        "id": "7e4b313b-1e9f-4702-8600-02472ab1a1e6",
+        "amount": "8.0",
+        "type": "flat_fee",
+        "description": "Flat fee",
+        "reference": "78c7b0d1",
+        "balance": "1992.0",
+        "created_at": "2017-09-30T03:54:37.094Z",
+        "url": "http://localhost:3000/users/cbe467a9-9059-4a4c-ab84-93d9b453b901/transactions/7e4b313b-1e9f-4702-8600-02472ab1a1e6.json"
+    },
+    {
+        "id": "fcb9287d-c335-45cc-aa9a-128e2bac3d6d",
+        "amount": "30.0",
+        "type": "variable_fee",
+        "description": "Variable fee",
+        "reference": "78c7b0d1",
+        "balance": "1962.0",
+        "created_at": "2017-09-30T03:55:31.092Z",
+        "url": "http://localhost:3000/users/cbe467a9-9059-4a4c-ab84-93d9b453b901/transactions/fcb9287d-c335-45cc-aa9a-128e2bac3d6d.json"
+    }
 ]
 ```
 
 #### Headers
 
- - **[X-Total-Pages]**. An integer containing the total amount of pages that the client can paginate through.
+ - **X-Total-Pages**. An integer containing the total amount of pages that the client can paginate through.
 
 ## Show
 
@@ -531,19 +537,19 @@ Returns the details of a certain transaction. If the given user uuid is not the 
 
 ### Request
 
-`GET /users/:user_uuid/transations/:uuid`
+`GET /users/:user_id/transations/:id`
 
 #### Headers
 
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
+ - **Accept** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
+ - **Content-Type** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
+ - **X-User-Email** *Required*. The email of the user account making the request.
+ - **X-User-Token** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
 
 ### Parameters
 
- - **[user_uuid]** *Required*. The unique ID of the user whose transaction is to be retrieved.
- - **[uuid]** *Required*. The unique ID of the user transaction.
+ - **user_id** *Required*. The unique ID of the user whose transaction is to be retrieved.
+ - **id** *Required*. The unique ID of the user transaction.
 
 ### Payload
 
@@ -555,69 +561,17 @@ _None._
 
 ```json
 {
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
-	"amount": 1000.00,
-	"type": "transfer",
-	"description": "Payment for service",
-	"transactionable" : {
-		"uuid" : "210c9ff2a2134d2e982baee5d694cce3"
-	}
-	"reference": null,
-	"balance": 2000.00,
-	"created_at": "2017-09-25 21:41:12 -0700"
-}
-```
-
-#### Headers
-
-_None._
-
-## Update
-
-> Roles: **admin**, **customer**
-
-Allows the client to update the description of a transaction. Trying to change other's user's data with a `customer` role will cause a `401 unauthorized` http error.
-
-### Request
-
-`PATCH /users/:user_uuid/transactions/:uuid`
-
-#### Headers
-
- - **[Accept]** *Optional*. Mime-Type that the client expects. Could be `application/json`, `application/xml` or `application/csv` for instance.
- - **[Content-Type]** *Optional*. The type of content being sent to the server. If the payload does not contain any binaries such as files or images the recommended is `application/json` otherwise it is recommended to use `multipart/form-data`.
- - **[X-User-Email]** *Required*. The email of the user account making the request.
- - **[X-User-Token]** *Required*. The secret token of the user to make the request. You can get one by using the `/tokens` endpoint.
-
-### Parameters
-
- - **[user_uuid]** *Required*. The unique ID of the user whose transaction is to be updated.
- - **[uuid]** *Required*. The unique ID of the user transaction.
-
-### Payload
-
-```json
-{
-	"description": "A newer description"
-}
-```
-
-### Response
-
-`200 ok`
-
-```json
-{
-	"uuid": "d31d73573a034830a1c6a995c4221d8d",
-	"amount": 1000.00,
-	"type": "transfer",
-	"description": "A newer description",
-	"transactionable" : {
-		"uuid" : "210c9ff2a2134d2e982baee5d694cce3"
-	}
-	"reference": null,
-	"balance": 2000.00,
-	"created_at": "2017-09-25 21:41:12 -0700"
+    "id": "78c7b0d1-7148-41d6-9d44-7edc7ae81390",
+    "amount": "1000.0",
+    "type": "transfer",
+    "description": "A test transfer",
+    "reference": null,
+    "balance": "2000.0",
+    "created_at": "2017-09-30T03:48:26.228Z",
+    "transferable": {
+        "id": "2ae667b5-6ae5-4565-8f87-24d776c6684e"
+    },
+    "url": "http://localhost:3000/users/cbe467a9-9059-4a4c-ab84-93d9b453b901/transactions/78c7b0d1-7148-41d6-9d44-7edc7ae81390.json"
 }
 ```
 
