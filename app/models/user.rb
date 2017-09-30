@@ -5,6 +5,7 @@ class User < ApplicationRecord
   has_many :tokens, dependent: :destroy
   has_one :account, dependent: :destroy
   has_many :cards, dependent: :destroy
+  has_many :transactions
 
   has_secure_password
 
