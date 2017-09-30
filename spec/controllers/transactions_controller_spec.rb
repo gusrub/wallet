@@ -63,9 +63,11 @@ RSpec.describe TransactionsController, type: :controller do
   end
 
   describe "GET #index" do
+    let!(:resource) { FactoryGirl.create_list(:transaction, 5, user: sender) }
+    subject { get :index, params: params, session: valid_session }
+    it_behaves_like "paginated endpoint"
     it "returns a success response" do
-      FactoryGirl.create(:transaction, user: sender)
-      get :index, params: params, session: valid_session
+      subject
       expect(response).to be_success
     end
   end
