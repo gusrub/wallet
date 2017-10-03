@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 
   load_and_authorize_resource
+  skip_load_resource only: :create
 
   # GET /users
   # GET /users.json
@@ -16,13 +17,13 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    # TODO: move this to a service
-    @user.build_account(balance: 0, account_type: Account.account_types[:customer])
+    service = Users::CreateUserService.new(create_params)
 
-    if @user.save
-      render :show, status: :created, location: @user
+    if service.perform
+      @user = service.output
+      render :show, status: :created, location: service.output
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: service.errors, status: :unprocessable_entity
     end
   end
 
@@ -39,7 +40,13 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user.destroy
+    service = Users::DeleteUserService.new(@user)
+
+    if service.perform
+      head :no_content
+    else
+      render json: service.errors, status: :bad_request
+    end
   end
 
   private

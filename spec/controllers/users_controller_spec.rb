@@ -231,8 +231,26 @@ RSpec.describe UsersController, type: :controller do
     context "Authenticated with admin user" do
       include_context "authenticated user", :admin
 
-      it "destroys the requested user" do
-        expect { subject }.to change(User, :count).by(-1)
+      context "when user has a balance" do
+        before :each do
+          user.account.update_attributes(balance: 1000)
+        end
+        it "does not delete the user" do
+          expect { subject }.to change(User, :count).by(0)
+        end
+        it "returns an error" do
+          subject
+          expect(response).to be_bad_request
+        end
+      end
+
+      context "when user balance is 0" do
+        before :each do
+          user.account.update_attributes(balance: 0)
+        end
+        it "destroys the requested user" do
+          expect { subject }.to change(User, :count).by(-1)
+        end
       end
     end
 

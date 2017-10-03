@@ -17,7 +17,8 @@ class User < ApplicationRecord
   enum status: {
     active: 0,
     unconfirmed: 1,
-    disabled: 2
+    disabled: 2,
+    removed: 3
   }
 
   validates :email, presence: true, uniqueness: true
@@ -27,8 +28,14 @@ class User < ApplicationRecord
   validates :status, presence: true, inclusion: { in: self.statuses.keys }  
   validates :password, length: { minimum: 8 }, allow_nil: true
 
+  delegate :balance, to: :account, allow_nil: true
+
   def valid_token_for(token_type, token)
     tokens.where(token_type: Token.token_types[token_type.to_sym], token: token).first
+  end
+
+  def full_name
+    "#{first_name} #{last_name}".strip
   end
 
 end

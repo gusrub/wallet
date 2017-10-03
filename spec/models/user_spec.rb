@@ -11,7 +11,7 @@ RSpec.describe User, type: :model do
     it { should validate_presence_of(:role) }
     it { is_expected.to define_enum_for(:role).with([:customer, :admin]) }
     it { should validate_presence_of(:status) }
-    it { is_expected.to define_enum_for(:status).with([:active, :unconfirmed, :disabled]) }
+    it { is_expected.to define_enum_for(:status).with([:active, :unconfirmed, :disabled, :removed]) }
     it { should validate_length_of(:password).is_at_least(8).on(:create) }
   end
 
