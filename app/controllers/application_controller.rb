@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
   end
 
   rescue_from CanCan::AccessDenied do |error|
-    render json: { level: :warning, message: "You are not authorized to access this resource"}, status: :forbidden
+    render json: { level: :warning, message: "You are not authorized to access this resource", data: nil }, status: :forbidden
   end
 
   # rescue_from StandardError do |error|

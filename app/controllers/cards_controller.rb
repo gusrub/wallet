@@ -1,6 +1,8 @@
 class CardsController < ApplicationController
-  before_action :set_user
-  before_action :set_card, only: [:show, :update, :destroy]
+
+  load_and_authorize_resource :user
+  load_and_authorize_resource through: :user
+  skip_load_resource only: :create
 
   # GET /cards
   # GET /cards.json
@@ -11,7 +13,7 @@ class CardsController < ApplicationController
     #          else
     #            @user.cards.active
     #          end
-    @cards = paginate(@user.cards)
+    @cards = paginate(@cards)
   end
 
   # GET /cards/1
@@ -24,10 +26,10 @@ class CardsController < ApplicationController
   def create
     # TODO: do this in a service and also validate card
     card_params = {
-      last_4: create_card_params[:number].last(4),
-      expiration: Date.parse("#{create_card_params[:expiration_year]}/#{create_card_params[:expiration_month]}/01"),
-      card_type: create_card_params[:card_type],
-      issuer: create_card_params[:issuer]
+      last_4: create_params[:number].last(4),
+      expiration: Date.parse("#{create_params[:expiration_year]}/#{create_params[:expiration_month]}/01"),
+      card_type: create_params[:card_type],
+      issuer: create_params[:issuer]
     }
 
     @card = @user.cards.build(card_params)
@@ -54,16 +56,8 @@ class CardsController < ApplicationController
 
   private
 
-  def set_user
-    @user = User.find(params[:user_id])
-  end
-
-  def set_card
-    @card = @user.cards.find(params[:id])
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
-  def create_card_params
+  def create_params
     params.require(:card).permit([
       :name_on_card,
       :number,
