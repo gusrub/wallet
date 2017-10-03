@@ -31,6 +31,7 @@ class Ability
     authorize_fees_resource(user)
     authorize_users_resource(user)
     authorize_cards_resource(user)
+    authorize_transactions_resource(user)
   end
 
   private
@@ -61,6 +62,16 @@ class Ability
         can :manage, Card
       else
         can [:read, :create, :destroy], Card, user_id: user.id
+      end
+    end
+  end
+
+  def authorize_transactions_resource(user)
+    if user.present?
+      if user.admin?
+        can :manage, Transaction
+      else
+        can [:read, :create], Transaction, user_id: user.id
       end
     end
   end
