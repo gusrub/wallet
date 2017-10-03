@@ -2,8 +2,8 @@ class Transaction < ApplicationRecord
 
   include Concerns::Paginable
 
-  belongs_to :transferable, polymorphic: true
-  belongs_to :user
+  belongs_to :transferable, polymorphic: true, autosave: true
+  belongs_to :user, optional: true
   belongs_to :reference, class_name: 'Transaction', foreign_key: :reference_id, optional: true
 
   enum transaction_type: {

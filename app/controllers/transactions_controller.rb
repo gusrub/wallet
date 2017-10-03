@@ -18,26 +18,13 @@ class TransactionsController < ApplicationController
   # POST /transactions
   # POST /transactions.json
   def create
-    # TODO: Move this to a service
-    transferable_id = create_params[:transferable][:id]
-    @transaction = @user.transactions.build(create_params.except(:transferable))
+    service = Transactions::CreateTransactionService.new(create_params, @user)
 
-    @transaction.transferable = if @transaction.transfer?
-                                  Account.find(transferable_id)
-                                elsif @transaction.deposit? || @transaction.withdrawal?
-                                  @user.cards.find(transferable_id)
-                                else
-                                # raise an error
-                                end
-
-    @transaction.description ||= "#{@transaction.transaction_type.humanize} to #{@transaction.transferable.user.email}"
-    @transaction.user_balance ||= 0
-    @transaction.transferable_balance ||= 0
-
-    if @transaction.save
+    if service.perform
+      @transaction = service.output
       render :show, status: :created, location: user_transaction_url(@transaction.user, @transaction)
     else
-      render json: @transaction.errors, status: :unprocessable_entity
+      raise ApiErrors::UnprocessableEntityError.new("Invalid transaction", service.errors)
     end
   end
 

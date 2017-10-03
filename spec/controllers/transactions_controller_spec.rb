@@ -52,10 +52,18 @@ RSpec.describe TransactionsController, type: :controller do
   }
 
   let(:params) { { format: :json, user_id: sender.id } }
+  let!(:fees) do
+    FactoryGirl.create(:fee, description: "Fee 1", lower_range: 0, upper_range: 1000, flat_fee: 8, variable_fee: 3)
+    FactoryGirl.create(:fee, description: "Fee 2", lower_range: 1001, upper_range: 5000, flat_fee: 6, variable_fee: 2.5)
+    FactoryGirl.create(:fee, description: "Fee 3", lower_range: 5001, upper_range: 10000, flat_fee: 4, variable_fee: 2)
+    FactoryGirl.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
+    Fee.all
+  end
+  let!(:default_account) { FactoryGirl.create(:account, account_type: 'internal') }
 
   before :each do
     sender.account.update_attributes(balance: 3000)
-    sender.account.update_attributes(balance: 1000)
+    receiver.account.update_attributes(balance: 1000)
   end
 
   describe "GET #index" do
@@ -151,14 +159,14 @@ RSpec.describe TransactionsController, type: :controller do
 
       context "with valid params" do
         it "creates a new Transaction" do
-          expect { subject }.to change(Transaction, :count).by(1)
+          expect { subject }.to change(Transaction, :count).by(3)
         end
 
         it "renders a JSON response with the new transaction" do
           subject
           expect(response).to have_http_status(:created)
           expect(response.content_type).to eq('application/json')
-          expect(response.location).to eq(user_transaction_url(sender, Transaction.last))
+          expect(response.location).to eq(user_transaction_url(sender, Transaction.where(transaction_type: Transaction.transaction_types[:transfer]).last))
         end
       end
 

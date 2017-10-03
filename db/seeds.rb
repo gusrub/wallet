@@ -5,3 +5,5 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+admin = User.create(email: "admin@walletapi.xyz", password: "Testing@123!", password_confirmation: "Testing@123!", first_name: "Admin", last_name: "User", role: User.roles[:admin], status: User.statuses[:active])
+Account.create(balance: 1000000, account_type: Account.account_types[:internal], user: admin)

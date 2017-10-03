@@ -3,7 +3,7 @@ class User < ApplicationRecord
   include Concerns::Paginable
 
   has_many :tokens, dependent: :destroy
-  has_one :account, dependent: :destroy
+  has_one :account, dependent: :destroy, autosave: true
   has_many :cards, dependent: :destroy
   has_many :transactions
 

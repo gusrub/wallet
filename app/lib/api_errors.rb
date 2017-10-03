@@ -42,4 +42,10 @@ module ApiErrors
     end
   end
 
+  class UnprocessableEntityError < ApiError
+    def initialize(message, data = nil)
+      super(:warning, message, data, 422)
+    end
+  end
+
 end
