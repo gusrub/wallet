@@ -30,6 +30,7 @@ class Ability
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
     authorize_fees_resource(user)
     authorize_users_resource(user)
+    authorize_cards_resource(user)
   end
 
   private
@@ -50,6 +51,16 @@ class Ability
         can :manage, User
       else
         can :show, User, id: user.id
+      end
+    end
+  end
+
+  def authorize_cards_resource(user)
+    if user.present?
+      if user.admin?
+        can :manage, Card
+      else
+        can [:read, :create, :destroy], Card, user_id: user.id
       end
     end
   end

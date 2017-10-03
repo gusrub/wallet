@@ -102,7 +102,7 @@ RSpec.describe UsersController, type: :controller do
 
       context "for authorized user" do
         let(:params) { { id: authenticated_user.id, format: :json } }
-        it "returns authorization error" do
+        it "returns a success response" do
           subject
           expect(response).to be_success
         end

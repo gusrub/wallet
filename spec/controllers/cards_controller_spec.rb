@@ -69,6 +69,26 @@ RSpec.describe CardsController, type: :controller do
       end
     end
 
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let(:params) { { user_id: authenticated_user.id, format: :json } }
+
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
+      end
+    end
+
     context "Not authenticated" do
       it "returns authentication error" do
         subject
@@ -87,6 +107,27 @@ RSpec.describe CardsController, type: :controller do
       it "returns a success response" do
         subject
         expect(response).to be_success
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let!(:card) { FactoryGirl.create(:card, user: authenticated_user) }
+        let(:params) { { user_id: authenticated_user.id, id: card.id, format: :json } }
+
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
       end
     end
 
@@ -128,6 +169,25 @@ RSpec.describe CardsController, type: :controller do
       end
     end
 
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let(:params) { { user_id: authenticated_user.id, card: valid_attributes, format: :json } }
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
+      end
+    end
+
     context "Not authenticated" do
       it "returns authentication error" do
         subject
@@ -145,6 +205,26 @@ RSpec.describe CardsController, type: :controller do
       include_context "authenticated user", :admin
       it "destroys the requested card" do
         expect { subject }.to change(Card, :count).by(-1)
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let!(:card) { FactoryGirl.create(:card, user: authenticated_user) }
+        let(:params) { { user_id: authenticated_user.id, id: card.id, format: :json } }
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
       end
     end
 
