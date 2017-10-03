@@ -1,10 +1,11 @@
 class FeesController < ApplicationController
-  before_action :set_fee, only: [:show, :update, :destroy]
+
+  load_and_authorize_resource
 
   # GET /fees
   # GET /fees.json
   def index
-    @fees = paginate(Fee.all)
+    @fees = paginate(@fees)
   end
 
   # GET /fees/1
@@ -15,8 +16,6 @@ class FeesController < ApplicationController
   # POST /fees
   # POST /fees.json
   def create
-    @fee = Fee.new(fee_params)
-
     if @fee.save
       render :show, status: :created, location: @fee
     else
@@ -41,13 +40,8 @@ class FeesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_fee
-      @fee = Fee.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def fee_params
-      params.require(:fee).permit(:description, :lower_range, :upper_range, :flat_fee, :variable_fee)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def fee_params
+    params.require(:fee).permit(:description, :lower_range, :upper_range, :flat_fee, :variable_fee)
+  end
 end

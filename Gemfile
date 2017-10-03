@@ -22,6 +22,9 @@ gem 'bcrypt', '~> 3.1.7'
 # This is for transactional email
 gem 'postmark-rails'
 
+# authorization
+gem 'cancancan'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
