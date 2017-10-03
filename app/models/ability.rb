@@ -29,6 +29,7 @@ class Ability
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
     authorize_fees_resource(user)
+    authorize_users_resource(user)
   end
 
   private
@@ -39,6 +40,16 @@ class Ability
         can :manage, Fee
       else
         cannot :manage, Fee
+      end
+    end
+  end
+
+  def authorize_users_resource(user)
+    if user.present?
+      if user.admin?
+        can :manage, User
+      else
+        can :show, User, id: user.id
       end
     end
   end

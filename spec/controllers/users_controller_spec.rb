@@ -58,6 +58,22 @@ RSpec.describe UsersController, type: :controller do
         expect(response).to be_success
       end
     end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
+    end
   end
 
   describe "GET #show" do
@@ -78,6 +94,25 @@ RSpec.describe UsersController, type: :controller do
       it "returns authentication error" do
         subject
         expect(response).to be_unauthorized
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let(:params) { { id: authenticated_user.id, format: :json } }
+        it "returns authorization error" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
       end
     end
   end
@@ -114,6 +149,15 @@ RSpec.describe UsersController, type: :controller do
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to eq('application/json')
         end
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
       end
     end
 
@@ -162,6 +206,15 @@ RSpec.describe UsersController, type: :controller do
       end
     end
 
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
+      end
+    end
+
     context "Not authenticated" do
       it "returns authentication error" do
         subject
@@ -180,6 +233,15 @@ RSpec.describe UsersController, type: :controller do
 
       it "destroys the requested user" do
         expect { subject }.to change(User, :count).by(-1)
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
       end
     end
 
