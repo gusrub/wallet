@@ -1,11 +1,13 @@
 class TransactionsController < ApplicationController
-  before_action :set_user
-  before_action :set_transaction, only: :show
+
+  load_and_authorize_resource :user
+  load_and_authorize_resource through: :user
+  skip_load_resource only: :create
 
   # GET /transactions
   # GET /transactions.json
   def index
-    @transactions = paginate(@user.transactions)
+    @transactions = paginate(@transactions)
   end
 
   # GET /transactions/1
@@ -17,8 +19,8 @@ class TransactionsController < ApplicationController
   # POST /transactions.json
   def create
     # TODO: Move this to a service
-    transferable_id = create_transaction_params[:transferable][:id]
-    @transaction = @user.transactions.build(create_transaction_params.except(:transferable))
+    transferable_id = create_params[:transferable][:id]
+    @transaction = @user.transactions.build(create_params.except(:transferable))
 
     @transaction.transferable = if @transaction.transfer?
                                   Account.find(transferable_id)
@@ -42,17 +44,8 @@ class TransactionsController < ApplicationController
 
   private
 
-  def set_user
-    @user = User.find(params[:user_id])
-  end
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_transaction
-    @transaction = Transaction.find(params[:id])
-  end
-
   # Never trust parameters from the scary internet, only allow the white list through.
-  def create_transaction_params
+  def create_params
     params.require(:transaction).permit(:amount, :transaction_type, :description, transferable: :id)
   end
 end

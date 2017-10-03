@@ -72,6 +72,26 @@ RSpec.describe TransactionsController, type: :controller do
       end
     end
 
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let(:params) { { user_id: authenticated_user.id, format: :json } }
+
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
+      end
+    end
+
     context "Not authenticated" do
       it "returns authentication error" do
         subject
@@ -90,6 +110,27 @@ RSpec.describe TransactionsController, type: :controller do
       it "returns a success response" do
         subject
         expect(response).to be_success
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let!(:transaction) { FactoryGirl.create(:transaction, user: authenticated_user) }
+        let(:params) { { user_id: authenticated_user.id, id: transaction.id, format: :json } }
+
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
+        end
       end
     end
 
@@ -129,6 +170,25 @@ RSpec.describe TransactionsController, type: :controller do
           subject
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to eq('application/json')
+        end
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      context "for authorized user" do
+        let(:params) { { user_id: authenticated_user.id, transaction: valid_attributes, format: :json } }
+        it "returns a success response" do
+          subject
+          expect(response).to be_success
+        end
+      end
+
+      context "for unauthorized user" do
+        it "returns authorization error" do
+          subject
+          expect(response).to be_forbidden
         end
       end
     end
