@@ -9,6 +9,10 @@ class Fee < ApplicationRecord
   validates :variable_fee, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validate :valid_range, if: lambda { self.lower_range.present? && self.upper_range.present? }
 
+  def self.within_range(amount)
+    where("(#{amount} BETWEEN lower_range AND upper_range)").first
+  end
+
   private
 
   def valid_range
