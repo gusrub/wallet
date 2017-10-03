@@ -51,10 +51,6 @@ RSpec.describe TransactionsController, type: :controller do
     }
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # TransactionsController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
   let(:params) { { format: :json, user_id: sender.id } }
 
   before :each do
@@ -64,45 +60,83 @@ RSpec.describe TransactionsController, type: :controller do
 
   describe "GET #index" do
     let!(:resource) { FactoryGirl.create_list(:transaction, 5, user: sender) }
-    subject { get :index, params: params, session: valid_session }
-    it_behaves_like "paginated endpoint"
-    it "returns a success response" do
-      subject
-      expect(response).to be_success
+    subject { get :index, params: params}
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      it_behaves_like "paginated endpoint"
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "GET #show" do
-    it "returns a success response" do
-      transaction = FactoryGirl.create(:transaction, user: sender)
-      get :show, params: params.merge({id: transaction.to_param}), session: valid_session
-      expect(response).to be_success
+    let!(:transaction) { FactoryGirl.create(:transaction, user: sender) }
+    let(:params) { { user_id: sender.id, id: transaction.id, format: :json} }
+    subject { get :show, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Transaction" do
-        expect {
-          post :create, params: params.merge({transaction: valid_attributes}), session: valid_session
-        }.to change(Transaction, :count).by(1)
+    let(:params) { { user_id: sender.id, transaction: valid_attributes, format: :json } }
+    subject { post :create, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      context "with valid params" do
+        it "creates a new Transaction" do
+          expect { subject }.to change(Transaction, :count).by(1)
+        end
+
+        it "renders a JSON response with the new transaction" do
+          subject
+          expect(response).to have_http_status(:created)
+          expect(response.content_type).to eq('application/json')
+          expect(response.location).to eq(user_transaction_url(sender, Transaction.last))
+        end
       end
 
-      it "renders a JSON response with the new transaction" do
+      context "with invalid params" do
+        let(:params) { { user_id: sender.id, transaction: invalid_attributes, format: :json} }
+        subject { post :create, params: params }
 
-        post :create, params: params.merge({transaction: valid_attributes}), session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(user_transaction_url(sender, Transaction.last))
+        it "renders a JSON response with errors for the new transaction" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new transaction" do
-
-        post :create, params: params.merge({transaction: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
       end
     end
   end

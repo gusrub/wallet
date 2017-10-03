@@ -43,107 +43,151 @@ RSpec.describe UsersController, type: :controller do
     }
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # UsersController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
   let(:params) { { format: :json } }
 
   describe "GET #index" do
     let!(:resource) { FactoryGirl.create_list(:user, 16) }
-    subject { get :index, params: params, session: valid_session }
+    subject { get :index, params: params}
 
-    it_behaves_like "paginated endpoint"
-    it "returns a success response" do
-      subject
-      expect(response).to be_success
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      it_behaves_like "paginated endpoint"
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
     end
   end
 
   describe "GET #show" do
-    it "returns a success response" do
-      user = User.create! valid_attributes
-      get :show, params: params.merge({id: user.to_param}), session: valid_session
-      expect(response).to be_success
+    let!(:user) { FactoryGirl.create(:user) }
+    let(:params) { {id: user.id, format: :json} }
+    subject { get :show, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new User" do
-        expect {
-          post :create, params: params.merge({user: valid_attributes}), session: valid_session
-        }.to change(User, :count).by(1)
+    let(:params) { {user: valid_attributes, format: :json} }
+    subject { post :create, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      context "with valid params" do
+        it "creates a new User" do
+          expect { subject }.to change(User, :count).by(1)
+        end
+
+        it "renders a JSON response with the new user" do
+          subject
+          expect(response).to have_http_status(:created)
+          expect(response.content_type).to eq('application/json')
+          expect(response.location).to eq(user_url(User.find_by(email: valid_attributes[:email])))
+        end
+
+        it "creates a default account for the user" do
+          expect { subject }.to change(Account, :count).by(1)
+          expect(json).to include(:account)
+        end
       end
 
-      it "renders a JSON response with the new user" do
-
-        post :create, params: params.merge({user: valid_attributes}), session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(user_url(User.last))
-      end
-
-      it "creates a default account for the user" do
-        expect {
-          post :create, params: params.merge({user: valid_attributes}), session: valid_session
-        }.to change(Account, :count).by(1)
-        expect(json).to include(:account)
+      context "with invalid params" do
+        let(:params) { {user: invalid_attributes, format: :json} }
+        it "renders a JSON response with errors for the new user" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new user" do
-
-        post :create, params: params.merge({user: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
       end
     end
   end
 
   describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        FactoryGirl.attributes_for :user
-      }
+    let!(:user) { FactoryGirl.create(:user) }
+    let(:new_attributes) { FactoryGirl.attributes_for :user }
+    let(:params) { {id: user.id, user: new_attributes, format: :json } }
+    subject { put :update, params: params }
 
-      it "updates the requested user" do
-        user = User.create! valid_attributes
-        put :update, params: params.merge({id: user.to_param, user: new_attributes}), session: valid_session
-        user.reload
-        expect(json[:first_name]).to eq(new_attributes[:first_name])
-        expect(json[:last_name]).to eq(new_attributes[:last_name])
-        expect(json[:role]).to eq(new_attributes[:role])
-        expect(json[:status]).to eq(new_attributes[:status])
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      context "with valid params" do
+        it "updates the requested user" do
+          subject
+          user.reload
+          expect(json[:first_name]).to eq(new_attributes[:first_name])
+          expect(json[:last_name]).to eq(new_attributes[:last_name])
+          expect(json[:role]).to eq(new_attributes[:role])
+          expect(json[:status]).to eq(new_attributes[:status])
+        end
+
+        it "renders a JSON response with the user" do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(response.content_type).to eq('application/json')
+        end
       end
 
-      it "renders a JSON response with the user" do
-        user = User.create! valid_attributes
+      context "with invalid params" do
+        it "renders a JSON response with errors for the user" do
+          user = User.create! valid_attributes
 
-        put :update, params: params.merge({id: user.to_param, user: new_attributes}), session: valid_session
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
+          put :update, params: params.merge({id: user.to_param, user: invalid_attributes})
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the user" do
-        user = User.create! valid_attributes
-
-        put :update, params: params.merge({id: user.to_param, user: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
       end
     end
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested user" do
-      user = User.create! valid_attributes
-      expect {
-        delete :destroy, params: params.merge({id: user.to_param}), session: valid_session
-      }.to change(User, :count).by(-1)
+    let!(:user) { FactoryGirl.create(:user) }
+    let(:params) { {id: user.id, format: :json } }
+    subject { delete :destroy, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      it "destroys the requested user" do
+        expect { subject }.to change(User, :count).by(-1)
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 

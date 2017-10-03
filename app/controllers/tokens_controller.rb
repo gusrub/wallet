@@ -1,17 +1,18 @@
 class TokensController < ApplicationController
 
+  skip_before_action :authenticate
   before_action :set_token, only: :show
 
   # POST /tokens
   # POST /tokens.json
   def create
-    @token = Token.new(token_params.except(:user))
-    @token.user = User.find_by(email: token_params.fetch(:user).fetch(:email)) if token_params[:user].present?
+    service = Tokens::CreateTokenService.new(token_params)
 
-    if @token.save
+    if service.perform
+      @token = service.output
       render :show, status: :created, location: @token
     else
-      render json: @token.errors, status: :unprocessable_entity
+      raise ApiErrors::BadRequestError.new("Error while creating new token", service.errors)
     end
   end
 

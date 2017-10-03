@@ -28,36 +28,33 @@ RSpec.describe TokensController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Token. As you add validations to Token, be sure to
   # adjust the attributes here as well.
-  let!(:user) { FactoryGirl.create :user }
+  let!(:user) { FactoryGirl.create(:user, password: "Testing@123!", password_confirmation: "Testing@123!") }
   let(:valid_attributes) {
-    FactoryGirl.attributes_for(:token).merge({user: { email: user.email}})
+    FactoryGirl.attributes_for(:token, token_type: 'authentication').merge({user: { email: user.email, password: "Testing@123!"}})
   }
 
   let(:invalid_attributes) {
     {
       token: nil,
       type: nil,
-      user: nil
+      user: {
+        email: nil,
+        password: nil
+      }
     }
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # TokensController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-  let(:params) { { format: :json } }
-
   describe "POST #create" do
+    let(:params) { { token: valid_attributes, format: :json } }
+    subject { post :create, params: params }
+
     context "with valid params" do
       it "creates a new Token" do
-        expect {
-          post :create, params: params.merge({token: valid_attributes}), session: valid_session
-        }.to change(Token, :count).by(1)
+        expect { subject }.to change(Token, :count).by(1)
       end
 
       it "renders a JSON response with the new token" do
-
-        post :create, params: params.merge({token: valid_attributes}), session: valid_session
+        subject
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
         expect(response.location).to eq(token_url(Token.last))
@@ -65,19 +62,22 @@ RSpec.describe TokensController, type: :controller do
     end
 
     context "with invalid params" do
+      let(:params) { { token: invalid_attributes, format: :json } }
       it "renders a JSON response with errors for the new token" do
-
-        post :create, params: params.merge({token: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
+        subject
+        expect(response).to have_http_status(:bad_request)
         expect(response.content_type).to eq('application/json')
       end
     end
   end
 
   describe "GET #show" do
+    let!(:token) { FactoryGirl.create(:token) }
+    let(:params) { {id: token.id, format: :json} }
+    subject { get :show, params: params }
+
     it "returns a success response" do
-      token = FactoryGirl.create(:token)
-      get :show, params: params.merge({id: token.to_param}), session: valid_session
+      subject
       expect(response).to be_success
     end
   end

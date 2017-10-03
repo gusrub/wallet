@@ -5,7 +5,7 @@ RSpec.describe Token, type: :model do
 
   describe :validations do
     it { should validate_presence_of(:user) }
-    it { is_expected.to define_enum_for(:token_type).with([:session, :account_confirmation, :password_reset, :email_change]) }
+    it { is_expected.to define_enum_for(:token_type).with([:authentication, :account_confirmation, :password_reset, :email_change]) }
   end
 
   describe :associations do
