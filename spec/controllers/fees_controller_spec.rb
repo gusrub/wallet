@@ -42,10 +42,6 @@ RSpec.describe FeesController, type: :controller do
     }
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # FeesController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
   let(:params) { { format: :json } }
 
   describe "GET #index" do
@@ -56,89 +52,143 @@ RSpec.describe FeesController, type: :controller do
       FactoryGirl.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
       Fee.all
     end
-    subject { get :index, params: params, session: valid_session }
+    subject { get :index, params: params }
 
-    it_behaves_like "paginated endpoint"
-    it "returns a success response" do
-      subject
-      expect(response).to be_success
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      it_behaves_like "paginated endpoint"
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "GET #show" do
-    it "returns a success response" do
-      fee = Fee.create! valid_attributes
-      get :show, params: params.merge({id: fee.to_param}), session: valid_session
-      expect(response).to be_success
+    let(:fee) { FactoryGirl.create(:fee) }
+    let(:params) { {id: fee.to_param, format: :json} }
+    subject { get :show, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Fee" do
-        expect {
-          post :create, params: params.merge({fee: valid_attributes}), session: valid_session
-        }.to change(Fee, :count).by(1)
+    let(:params) { {fee: valid_attributes, format: :json} }
+    subject { post :create, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      context "with valid params" do
+        it "creates a new Fee" do
+          expect {
+            subject
+          }.to change(Fee, :count).by(1)
+        end
+
+        it "renders a JSON response with the new fee" do
+          subject
+          expect(response).to have_http_status(:created)
+          expect(response.content_type).to eq('application/json')
+          expect(response.location).to eq(fee_url(Fee.last))
+        end
       end
 
-      it "renders a JSON response with the new fee" do
-
-        post :create, params: params.merge({fee: valid_attributes}), session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(fee_url(Fee.last))
+      context "with invalid params" do
+        let(:params) { {fee: invalid_attributes, format: :json} }
+        it "renders a JSON response with errors for the new fee" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new fee" do
-
-        post :create, params: params.merge({fee: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
       end
     end
   end
 
   describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        { description: "Another one" }
-      }
+    let(:fee) { FactoryGirl.create(:fee) }
+    let(:new_attributes) { { description: "Another one" }}
+    let(:params) { {id: fee.to_param, fee: new_attributes, format: :json} }
 
-      it "updates the requested fee" do
-        fee = Fee.create! valid_attributes
-        put :update, params: params.merge({id: fee.to_param, fee: new_attributes}), session: valid_session
-        fee.reload
-        expect(json[:description]).to eq(new_attributes[:description])
+    subject { put :update, params: params }
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      context "with valid params" do
+        it "updates the requested fee" do
+          subject
+          fee.reload
+          expect(json[:description]).to eq(new_attributes[:description])
+        end
+
+        it "renders a JSON response with the fee" do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(response.content_type).to eq('application/json')
+        end
       end
 
-      it "renders a JSON response with the fee" do
-        fee = Fee.create! valid_attributes
-
-        put :update, params: params.merge({id: fee.to_param, fee: new_attributes}), session: valid_session
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
+      context "with invalid params" do
+        let(:params) { {id: fee.to_param, fee: invalid_attributes, format: :json} }
+        it "renders a JSON response with errors for the fee" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the fee" do
-        fee = Fee.create! valid_attributes
-
-        put :update, params: params.merge({id: fee.to_param, fee: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
       end
     end
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested fee" do
-      fee = Fee.create! valid_attributes
-      expect {
-        delete :destroy, params: params.merge({id: fee.to_param}), session: valid_session
-      }.to change(Fee, :count).by(-1)
+    let!(:fee) { FactoryGirl.create(:fee) }
+    let(:params) { {id: fee.id, format: :json} }
+    subject { delete :destroy, params: params }
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      it "destroys the requested fee" do
+        expect {
+          subject
+        }.to change(Fee, :count).by(-1)
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 

@@ -52,64 +52,107 @@ RSpec.describe CardsController, type: :controller do
     }
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # CardsController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
   let(:user) { FactoryGirl.create(:user) }
-  let(:params) { { format: :json, user_id: user.id } }
 
   describe "GET #index" do
     let!(:resource) { FactoryGirl.create_list(:user_with_cards, 5) }
-    subject { get :index, params: params, session: valid_session }
-    it_behaves_like "paginated endpoint"
-    it "returns a success response" do
-      subject
-      expect(response).to be_success
+    let(:params) { { format: :json, user_id: user.id } }
+    subject { get :index, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      it_behaves_like "paginated endpoint"
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "GET #show" do
-    it "returns a success response" do
-      card = FactoryGirl.create(:card, user: user)
-      get :show, params: params.merge({id: card.to_param}), session: valid_session
-      expect(response).to be_success
+    let!(:card) { FactoryGirl.create(:card, user: user) }
+    let(:params) { { user_id: user.id, id: card.id, format: :json } }
+    subject { get :show, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      it "returns a success response" do
+        subject
+        expect(response).to be_success
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 
   describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Card" do
-        expect {
-          post :create, params: params.merge({card: valid_attributes}), session: valid_session
-        }.to change(Card, :count).by(1)
+    let(:params) { { user_id: user.id, card: valid_attributes, format: :json } }
+    subject { post :create, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+
+      context "with valid params" do
+        it "creates a new Card" do
+          expect { subject }.to change(Card, :count).by(1)
+        end
+
+        it "renders a JSON response with the new card" do
+          subject
+          expect(response).to have_http_status(:created)
+          expect(response.content_type).to eq('application/json')
+          expect(response.location).to eq(user_cards_url(Card.last.user, Card.last))
+        end
       end
 
-      it "renders a JSON response with the new card" do
-
-        post :create, params: params.merge({card: valid_attributes}), session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(user_cards_url(Card.last.user, Card.last))
+      context "with invalid params" do
+        let(:params) { { user_id: user.id, card: invalid_attributes, format: :json } }
+        it "renders a JSON response with errors for the new card" do
+          subject
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new card" do
-
-        post :create, params: params.merge({card: invalid_attributes}), session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
       end
     end
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested card" do
-      card = FactoryGirl.create(:card, user: user)
-      expect {
-        delete :destroy, params: params.merge({id: card.to_param}), session: valid_session
-      }.to change(Card, :count).by(-1)
+    let!(:card) { FactoryGirl.create(:card, user: user) }
+    let(:params) { { user_id: user.id, id: card.id, format: :json } }
+    subject { delete :destroy, params: params }
+
+    context "Authenticated with admin user" do
+      include_context "authenticated user", :admin
+      it "destroys the requested card" do
+        expect { subject }.to change(Card, :count).by(-1)
+      end
+    end
+
+    context "Not authenticated" do
+      it "returns authentication error" do
+        subject
+        expect(response).to be_unauthorized
+      end
     end
   end
 

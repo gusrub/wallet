@@ -26,4 +26,9 @@ class User < ApplicationRecord
   validates :role, presence: true, inclusion: { in: self.roles.keys }
   validates :status, presence: true, inclusion: { in: self.statuses.keys }  
   validates :password, length: { minimum: 8 }, allow_nil: true
+
+  def valid_token_for(token_type, token)
+    tokens.where(token_type: Token.token_types[token_type.to_sym], token: token).first
+  end
+
 end

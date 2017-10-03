@@ -4,7 +4,7 @@ class Token < ApplicationRecord
   has_secure_token
 
   enum token_type: {
-    session: 0,
+    authentication: 0,
     account_confirmation: 1,
     password_reset: 2,
     email_change: 3
@@ -15,11 +15,15 @@ class Token < ApplicationRecord
 
   before_create :set_expiration, on: :create
 
+  def expired?
+    expires_at <= Time.now
+  end
+
   private
 
   def set_expiration
-    self.expires_at = if session?
-                        24.hours.from_now
+    self.expires_at = if authentication?
+                        1.hour.from_now
                       elsif account_confirmation?
                         3.days.from_now
                       elsif password_reset?

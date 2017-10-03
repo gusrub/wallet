@@ -2,13 +2,13 @@
 
 The tokens endpoint serves the purpose to provide the client user a safe way to either request a safe, expirable token to interact with the rest of the API or to change credentials such as a password reset.
 
-Notice that tokens have an expiration date, depending on the type of token. Session tokens will last for 1 hour whereas password reset tokens will last for 1 day. If you get an unauthorized error you should request a new token.
+Notice that tokens have an expiration date, depending on the type of token. Authentication tokens will last for 1 hour whereas password reset tokens will last for 1 day. If you get an unauthorized error you should request a new token.
 
 ## Create
 
 > Roles: **admin**, **customer**
 
-Creates a new token for the given type. You should use this endpoint to request a _"session"_ token so you can interact with the rest of the application.
+Creates a new token for the given type. You should use this endpoint to request an _"authentication"_ token so you can interact with the rest of the application.
 
 
 ### Request
@@ -21,16 +21,16 @@ _None._
 
 ### Parameters
 
- - **token[type]** *Required.* The type of the token to request. Can be either `session` or `password_reset`.
+ - **token[type]** *Required.* The type of the token to request. Can be either `authentication` or `password_reset`.
  - **token[user][email]** *Required.* Email of the user to create the token for.
- - **token[user][password]** *Optional.* Password for the user requesting the token. Only necessary when requesting a `session` type of token.
+ - **token[user][password]** *Optional.* Password for the user requesting the token. Only necessary when requesting a `authentication` type of token.
 
 ### Payload
 
 ```json
 {
     "token": {
-        "token_type": "session",
+        "token_type": "authentication",
         "user": {
             "email": "john07@example.com",
             "password": "Testing@123!"
@@ -46,7 +46,7 @@ _None._
 ```json
 {
     "token": "8taehCMah79rgdWkkvTMgjbz",
-    "token_type": "session",
+    "token_type": "authentication",
     "expires_at": "2017-09-30T00:33:42.648Z",
     "url": "https://walletapi.xyz/tokens/2bc2844a-0b3a-4c53-beaa-2bf5e2eaf37b.json"
 }
