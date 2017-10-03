@@ -44,6 +44,7 @@ GEM
     bcrypt (3.1.11)
     builder (3.2.3)
     byebug (9.1.0)
+    cancancan (1.17.0)
     concurrent-ruby (1.0.5)
     crass (1.0.2)
     database_cleaner (1.6.1)
@@ -178,6 +179,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt (~> 3.1.7)
   byebug
+  cancancan
   database_cleaner
   dotenv-rails
   factory_girl_rails

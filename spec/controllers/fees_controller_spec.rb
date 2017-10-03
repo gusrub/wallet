@@ -63,6 +63,15 @@ RSpec.describe FeesController, type: :controller do
       end
     end
 
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
+      end
+    end
+
     context "Not authenticated" do
       it "returns authentication error" do
         subject
@@ -81,6 +90,15 @@ RSpec.describe FeesController, type: :controller do
       it "returns a success response" do
         subject
         expect(response).to be_success
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
       end
     end
 
@@ -120,6 +138,15 @@ RSpec.describe FeesController, type: :controller do
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response.content_type).to eq('application/json')
         end
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
       end
     end
 
@@ -163,6 +190,15 @@ RSpec.describe FeesController, type: :controller do
       end
     end
 
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
+      end
+    end
+
     context "Not authenticated" do
       it "returns authentication error" do
         subject
@@ -181,6 +217,15 @@ RSpec.describe FeesController, type: :controller do
         expect {
           subject
         }.to change(Fee, :count).by(-1)
+      end
+    end
+
+    context "Authenticated with customer user" do
+      include_context "authenticated user", :customer
+
+      it "returns authorization error" do
+        subject
+        expect(response).to be_forbidden
       end
     end
 

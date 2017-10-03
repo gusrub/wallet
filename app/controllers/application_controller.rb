@@ -1,5 +1,7 @@
 class ApplicationController < ActionController::API
 
+  include CanCan::ControllerAdditions
+
   before_action :authenticate
 
   rescue_from ActiveRecord::RecordNotFound do |error|
@@ -14,6 +16,10 @@ class ApplicationController < ActionController::API
 
   rescue_from ApiErrors::ApiError do |error|
     render json: { level: error.level, message: error.message, data: error.data }, status: error.status
+  end
+
+  rescue_from CanCan::AccessDenied do |error|
+    render json: { level: :warning, message: "You are not authorized to access this resource"}, status: :forbidden
   end
 
   # rescue_from StandardError do |error|
