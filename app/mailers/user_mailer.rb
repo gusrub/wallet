@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  default from: ENV['DEFAULT_MAIL_ADDRESS']
+  default from: "Wallet API <#{ENV['DEFAULT_MAIL_ADDRESS']}>"
 
   def welcome_message(user)
     @user = user
