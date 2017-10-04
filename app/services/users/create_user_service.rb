@@ -17,6 +17,7 @@ module Users
       @messages.clear
 
       return false unless valid_user?
+      UserMailer.welcome_message(@user).deliver
 
       @errors.empty?
     end
