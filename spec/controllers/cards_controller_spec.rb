@@ -56,6 +56,7 @@ RSpec.describe CardsController, type: :controller do
 
   describe "GET #index" do
     let!(:resource) { FactoryGirl.create_list(:user_with_cards, 5) }
+    let!(:user) { resource.first }
     let(:params) { { format: :json, user_id: user.id } }
     subject { get :index, params: params }
 
@@ -66,6 +67,18 @@ RSpec.describe CardsController, type: :controller do
       it "returns a success response" do
         subject
         expect(response).to be_success
+        expect(json.count).to eq(user.cards.count)
+      end
+
+      context "when there are removed cards" do
+        before :each do
+          user.cards.first.removed!
+        end
+
+        it "returns both active and removed cards" do
+          subject
+          expect(json.count).to eq(user.cards.count)
+        end
       end
     end
 
@@ -74,10 +87,23 @@ RSpec.describe CardsController, type: :controller do
 
       context "for authorized user" do
         let(:params) { { user_id: authenticated_user.id, format: :json } }
+        let!(:cards) { FactoryGirl.create_list(:card, 4, user: authenticated_user) }
 
         it "returns a success response" do
           subject
           expect(response).to be_success
+          expect(json.count).to eq(authenticated_user.cards.active.count)
+        end
+
+        context "when there are removed cards" do
+          before :each do
+            authenticated_user.cards.first.removed!
+          end
+
+          it "returns only active cards" do
+            subject
+            expect(json.count).to eq(authenticated_user.cards.active.count)
+          end
         end
       end
 
@@ -108,6 +134,21 @@ RSpec.describe CardsController, type: :controller do
         subject
         expect(response).to be_success
       end
+
+      context "when card had transactions and was removed" do
+        let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+
+        before :each do
+          card.removed!
+        end
+
+        it "still returns the card resource" do
+          subject
+          expect(response).to be_success
+          expect(json[:id]).to eq(card.id)
+          expect(json[:status]).to eq('removed')
+        end
+      end
     end
 
     context "Authenticated with customer user" do
@@ -120,6 +161,19 @@ RSpec.describe CardsController, type: :controller do
         it "returns a success response" do
           subject
           expect(response).to be_success
+        end
+
+        context "when card had transactions and was removed" do
+          let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+
+          before :each do
+            card.removed!
+          end
+
+          it "it returns an error" do
+            subject
+            expect(response).to be_forbidden
+          end
         end
       end
 
@@ -206,6 +260,16 @@ RSpec.describe CardsController, type: :controller do
       it "destroys the requested card" do
         expect { subject }.to change(Card, :count).by(-1)
       end
+
+      context "when card has transactions" do
+        let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+
+        it "only marks card as removed" do
+          expect { subject }.to_not change(Card, :count)
+          expect(user.cards.removed).to include(card)
+          expect(card.reload.removed?).to be true
+        end
+      end
     end
 
     context "Authenticated with customer user" do
@@ -217,6 +281,16 @@ RSpec.describe CardsController, type: :controller do
         it "returns a success response" do
           subject
           expect(response).to be_success
+        end
+
+        context "when card has transactions" do
+          let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+
+          it "only marks card as removed" do
+            expect { subject }.to_not change(Card, :count)
+            expect(authenticated_user.cards.removed).to include(card)
+            expect(card.reload.removed?).to be true
+          end
         end
       end
 

@@ -26,11 +26,23 @@ class Card < ApplicationRecord
   validates :expiration, presence: true
 
   before_validation :override_expiration_day
-  before_validation :enable_card, only: :create
+  before_validation :enable_card, on: :create
+  before_destroy :check_transactions
 
   scope :expired, -> { where("expiration <= ?", Time.now.strftime("%Y/%m/%d")) }
 
+  def has_transactions?
+    Transaction.where(transferable: self).exists?
+  end
+
   private
+
+  def check_transactions
+    if has_transactions?
+      errors.add(:base, "This card has transactions so it cannot be physically removed, set it as removed instead.")
+      throw(:abort)
+    end
+  end
 
   def override_expiration_day
     if expiration.present?
