@@ -11,6 +11,17 @@ RSpec.describe Card, type: :model do
     it { should validate_length_of(:last_4).is_equal_to(4) }
     it { should validate_presence_of(:user) }
     it { should validate_presence_of(:expiration) }
+
+    context "when card has transactions" do
+      let!(:user) { FactoryGirl.create(:user_with_cards) }
+      let!(:card) { user.cards.first }
+      let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+
+      it "should validate transactions on destroy" do
+        expect(card.destroy).to be false
+        expect { card.destroy }.to_not change(Card, :count)
+      end
+    end
   end
 
   describe :associations do

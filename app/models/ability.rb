@@ -61,7 +61,8 @@ class Ability
       if user.admin?
         can :manage, Card
       else
-        can [:read, :create, :destroy], Card, user_id: user.id
+        can [:create], Card, user_id: user.id
+        can [:read, :destroy], Card, user_id: user.id, status: Card.statuses[:active]
       end
     end
   end

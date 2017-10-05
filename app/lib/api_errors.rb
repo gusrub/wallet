@@ -48,4 +48,10 @@ module ApiErrors
     end
   end
 
+  class NotFoundError < ApiError
+    def initialize(message, data = nil)
+      super(:warning, message, data, 404)
+    end
+  end
+
 end

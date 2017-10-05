@@ -145,5 +145,4 @@ module Transactions
       @errors.empty?
     end
   end
-
 end
