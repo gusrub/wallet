@@ -23,7 +23,7 @@ class UsersController < ApplicationController
       @user = service.output
       render :show, status: :created, location: service.output
     else
-      render json: service.errors, status: :unprocessable_entity
+      raise ApiErrors::UnprocessableEntityError.new("Error while creating user", service.errors)
     end
   end
 
@@ -33,19 +33,19 @@ class UsersController < ApplicationController
     if @user.update(update_params)
       render :show, status: :ok, location: @user
     else
-      render json: @user.errors, status: :unprocessable_entity
+      raise ApiErrors::UnprocessableEntityError.new("Error while updating user", @user.errors.full_messages)
     end
   end
 
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    service = Users::DeleteUserService.new(@user)
+    service = Users::DestroyUserService.new(@user)
 
     if service.perform
       head :no_content
     else
-      render json: service.errors, status: :bad_request
+      raise ApiErrors::UnprocessableEntityError.new("Error while removing card", service.errors)
     end
   end
 

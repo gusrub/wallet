@@ -240,7 +240,8 @@ RSpec.describe UsersController, type: :controller do
         end
         it "returns an error" do
           subject
-          expect(response).to be_bad_request
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
         end
       end
 

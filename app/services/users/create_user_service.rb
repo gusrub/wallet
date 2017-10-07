@@ -32,7 +32,7 @@ module Users
         @user.save!
         @output = @user
       else
-        @errors << @user.errors.messages
+        @errors << @user.errors.full_messages
       end
 
       @errors.empty?

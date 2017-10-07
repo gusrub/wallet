@@ -40,7 +40,7 @@ module Tokens
         @token.save!
         @output = @token
       else
-        @errors << @token.errors.messages
+        @errors << @token.errors.full_messages
       end
 
       @errors.empty?
