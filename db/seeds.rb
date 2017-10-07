@@ -1,6 +1,21 @@
 # Test admin user with a default internal account
-admin = User.find_or_create_by(email: "admin@walletapi.xyz", password: "Testing@123!", password_confirmation: "Testing@123!", first_name: "Admin", last_name: "User", role: User.roles[:admin], status: User.statuses[:active])
-Account.create(balance: 1000000, account_type: Account.account_types[:internal], user: admin) unless admin.account.present?
+admin_args = {
+  email: "admin@walletapi.xyz",
+  password: "Testing@123!",
+  password_confirmation: "Testing@123!",
+  first_name: "Admin",
+  last_name: "User",
+  role: User.roles[:admin],
+  status: User.statuses[:active]
+}
+if User.where(email: admin_args[:email]).empty?
+  admin = User.create(admin_args)
+  account_args = {
+    balance: 1000000,
+    account_type: Account.account_types[:internal]
+  }
+  admin.create_account(account_args)
+end
 
 [
   {
