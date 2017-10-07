@@ -1,6 +1,6 @@
 module Users
 
-  class DeleteUserService
+  class DestroyUserService
 
     attr_reader :output, :errors, :messages, :user
 

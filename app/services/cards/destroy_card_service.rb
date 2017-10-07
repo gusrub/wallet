@@ -19,7 +19,7 @@ module Cards
       if @card.has_transactions?
         @card.removed!
       else
-        @errors << @card.errors.messages unless @card.destroy
+        @errors << @card.errors.full_messages unless @card.destroy
       end
 
       @errors.empty?

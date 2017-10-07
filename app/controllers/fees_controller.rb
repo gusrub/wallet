@@ -19,7 +19,7 @@ class FeesController < ApplicationController
     if @fee.save
       render :show, status: :created, location: @fee
     else
-      render json: @fee.errors, status: :unprocessable_entity
+      raise ApiErrors::UnprocessableEntityError.new("Error while creating card", @fee.errors.full_messages)
     end
   end
 
@@ -29,14 +29,14 @@ class FeesController < ApplicationController
     if @fee.update(fee_params)
       render :show, status: :ok, location: @fee
     else
-      render json: @fee.errors, status: :unprocessable_entity
+      raise ApiErrors::UnprocessableEntityError.new("Error while updating card", @fee.errors.full_messages)
     end
   end
 
   # DELETE /fees/1
   # DELETE /fees/1.json
   def destroy
-    @fee.destroy
+    @fee.destroy!
   end
 
   private

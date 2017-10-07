@@ -34,7 +34,7 @@ module Cards
         @card.save!
         @output = @card
       else
-        @errors << @card.errors.messages
+        @errors << @card.errors.full_messages
       end
 
       @errors.empty?
