@@ -11,6 +11,7 @@ RSpec.describe Card, type: :model do
     it { should validate_length_of(:last_4).is_equal_to(4) }
     it { should validate_presence_of(:user) }
     it { should validate_presence_of(:expiration) }
+    it { should validate_presence_of(:bank_token) }
 
     context "when card has transactions" do
       let!(:user) { FactoryGirl.create(:user_with_cards) }

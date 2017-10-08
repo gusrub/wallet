@@ -22,16 +22,6 @@ class ApplicationController < ActionController::API
     render json: { level: :warning, message: "You are not authorized to access this resource", data: nil }, status: :forbidden
   end
 
-  # rescue_from StandardError do |error|
-  #   error_response = {
-  #     level: "error",
-  #     message: "There has been an internal system error",
-  #     data: nil
-  #   }
-  #   error_response[:data] = error if Rails.env.development? || Rails.env.test?
-  #   render json: error_response, status: 500
-  # end
-
   def current_user
     @current_user
   end

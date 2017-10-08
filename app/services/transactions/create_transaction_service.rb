@@ -101,15 +101,24 @@ module Transactions
       @transaction.transferable = transferable
 
       if @user.cards.where(id: @transaction.transferable.id).blank?
-        @errors << "You can only withdraw money from your own accounts"
+        @errors << "You can only withdraw money from your own cards"
         return false
       end
 
       return false unless enough_balance?
 
+      # get authorization from bank
+      service = BankSimulator::DepositFundsService.new({amount: @transaction.amount, bank_token: transferable.bank_token})
+      if service.perform
+        authorization_code = service.output
+      else
+        @errors.concat(service.errors)
+        return false
+      end
+
       ActiveRecord::Base.transaction do
         # create the actual transaction
-        @transaction.description ||= "#{@transaction.transaction_type.humanize} to #{@transaction.transferable.last_4}"
+        @transaction.description = "#{@transaction.transaction_type.humanize} to XXXX-XXXX-XXXX-#{@transaction.transferable.last_4} [AUTHORIZATION: #{authorization_code}]"
         @transaction.user_balance = (@user.account.balance - @transaction.amount)
         @transaction.transferable_balance = 0
         @user.account.balance = (@user.account.balance - @transaction.amount)
@@ -121,7 +130,32 @@ module Transactions
     end
 
     def create_deposit
-      # TODO!
+      @transaction.transferable = transferable
+
+      if @user.cards.where(id: @transaction.transferable.id).blank?
+        @errors << "You can only deposit money from your own cards"
+        return false
+      end
+
+      # get authorization from bank
+      service = BankSimulator::WithdrawFundsService.new({amount: @transaction.amount, bank_token: transferable.bank_token})
+      if service.perform
+        authorization_code = service.output
+      else
+        @errors.concat(service.errors)
+        return false
+      end
+
+      ActiveRecord::Base.transaction do
+        # create the actual transaction
+        @transaction.description = "#{@transaction.transaction_type.humanize} to XXXX-XXXX-XXXX-#{@transaction.transferable.last_4} [AUTHORIZATION: #{authorization_code}]"
+        @transaction.user_balance = (@user.account.balance + @transaction.amount)
+        @transaction.transferable_balance = 0
+        @user.account.balance = (@user.account.balance + @transaction.amount)
+        @transaction.save!
+        @user.save!
+        @output = @transaction
+      end
     end
 
     def transferable

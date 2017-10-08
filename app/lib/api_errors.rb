@@ -36,6 +36,12 @@ module ApiErrors
     end
   end
 
+  class BadGatewayError < ApiError
+    def initialize(message, data = nil)
+      super(:error, message, data, 502)
+    end
+  end
+
   class BadRequestError < ApiError
     def initialize(message, data = nil)
       super(:warning, message, data, 400)
