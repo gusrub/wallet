@@ -93,6 +93,10 @@ module Transactions
         @variable_fee_transaction.save!
         @user.account.balance = (@user.account.balance - total)
         @user.save!
+
+        # send notification
+        TransactionMailer.notification(@transaction).deliver
+
         @output = @transaction
       end
     end
@@ -125,6 +129,9 @@ module Transactions
         @transaction.save!
         @user.save!
         @output = @transaction
+
+        # send notification
+        TransactionMailer.notification(@transaction).deliver
       end
 
     end
@@ -155,6 +162,9 @@ module Transactions
         @transaction.save!
         @user.save!
         @output = @transaction
+
+        # send notification
+        TransactionMailer.notification(@transaction).deliver
       end
     end
 
