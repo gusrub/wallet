@@ -4,8 +4,6 @@ class Card < ApplicationRecord
 
   belongs_to :user
 
-  has_secure_token :bank_token
-
   ISSUERS = %w(amex visa mastercard dinners discover)
 
   enum card_type: {
@@ -24,6 +22,7 @@ class Card < ApplicationRecord
   validates :status, presence: true, inclusion: { in: self.statuses.keys }
   validates :user, presence: true
   validates :expiration, presence: true
+  validates :bank_token, presence: true
 
   before_validation :override_expiration_day
   before_validation :enable_card, on: :create

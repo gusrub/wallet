@@ -25,12 +25,9 @@ module Cards
       }
 
       @card = @user.cards.build(card_args)
+      return false unless @card.bank_token = generate_bank_token
 
       if @card.valid?
-        # TODO: implement a method that exchanges card info for a token
-        # that we'll use to store only necessary info and remove automatic
-        # token generation of has_secure_token
-        # @card.token = generate_bank_token
         @card.save!
         @output = @card
       else
@@ -38,6 +35,21 @@ module Cards
       end
 
       @errors.empty?
+    end
+
+    def generate_bank_token
+      # TODO: Use VCR or something like that to generate requests/responses on specs
+      if Rails.env.test?
+        Digest::MD5.hexdigest("supersecure")
+      else
+        service = BankSimulator::AddCardService.new(@card_params)
+        if service.perform
+          service.output
+        else
+          @errors.concat(service.errors)
+          false
+        end
+      end
     end
 
   end
