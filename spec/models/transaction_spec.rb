@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Transaction, type: :model do
-  subject { FactoryGirl.build(:transaction, :with_reference) }
+  subject { FactoryBot.build(:transaction, :with_reference) }
 
   describe :validations do
     it { should validate_presence_of(:amount) }
@@ -31,7 +31,7 @@ RSpec.describe Transaction, type: :model do
 
   describe :associations do
     it { is_expected.to belong_to(:transferable) }
-    it { is_expected.to belong_to(:user) }
-    it { is_expected.to belong_to(:reference).class_name("Transaction").with_foreign_key("reference_id") }
+    it { is_expected.to belong_to(:user).optional }
+    it { is_expected.to belong_to(:reference).class_name("Transaction").with_foreign_key("reference_id").optional }
   end
 end

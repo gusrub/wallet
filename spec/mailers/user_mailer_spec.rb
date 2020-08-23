@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe UserMailer, type: :mailer do
   describe "welcome_message" do
-    let(:user) { FactoryGirl.create(:user) }
+    let(:user) { FactoryBot.create(:user) }
     let(:mail) { UserMailer.welcome_message(user) }
 
     it "renders the headers" do

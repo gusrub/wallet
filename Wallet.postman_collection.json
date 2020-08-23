@@ -1,0 +1,1119 @@
+{
+	"info": {
+		"_postman_id": "e9c44666-8011-b246-387d-555ad46f059e",
+		"name": "Wallet",
+		"description": "The wallet REST API demo app requests with love from me to you :)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a703671-2bbc-4445-8ff4-b17a2865b5c3",
+								"exec": [
+									"var users = pm.response.json();",
+									"",
+									"if (users !== undefined && users.length > 0) {",
+									"    pm.environment.set(\"userId\", users[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/users?page=1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Lists current users in the system. Both customer and admin types. By default only the last 10 created\nrecords are returned. Parameters must be sent in order to retrieve the next pages."
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a1201aa1-02e3-448a-812c-7d1661a640d9",
+								"exec": [
+									"var user = pm.response.json();",
+									"",
+									"if (user !== undefined) {",
+									"    pm.environment.set(\"userId\", user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/users/{{userId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Returns the details of a certain user. If the given user uuid is not the client's request user and the\nclient's request user is a customer a 401 unauthorized http error will be returned. Only admin\nusers can retrieve details for all other users."
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9dfae60c-c773-4966-90a6-f6f3c39a0c50",
+								"exec": [
+									"var user = pm.response.json();",
+									"",
+									"if (user !== undefined) {",
+									"    pm.environment.set(\"userId\", user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{auth_email}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user\": {\n\t\t\"email\": \"gustavo.rubio@gmail.com\",\n\t\t\"password\": \"Testing@123!\",\n\t\t\"first_name\": \"Gustavo\",\n\t\t\"last_name\": \"Rubio\",\n\t\t\"role\": \"customer\",\n\t\t\"status\": \"active\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Creates a new user with the given data. This endpoint is restricted to admin operations."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "00f69226-62fc-44f2-ace8-3569a7156cf0",
+								"exec": [
+									"var user = pm.response.json();",
+									"",
+									"if (user !== undefined) {",
+									"    pm.environment.set(\"userId\", user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{auth_email}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user\": {\n\t\t\"first_name\": \"Peter\",\n\t\t\"last_name\": \"Gabriel\",\n\t\t\"email\": \"peter@example.com\",\n\t\t\"role\": \"admin\",\n\t\t\"status\": \"active\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/users/{{userId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Updates an existing user with the given data. This endpoint does not support updating a user's\npassword or email and is only purpose is to update personal data for the user. If the requesting\nuser is an admin it can change any other user's data, otherwise it can only change the requesting\nuser's data. Trying to change other's user's data with a customer role will cause a 401 unauthorized\nhttp error."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "fees",
+			"item": [
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "439fb718-ddea-408f-ac4c-a81889b15f63",
+								"exec": [
+									"var fee = pm.response.json();",
+									"",
+									"if (fee !== undefined) {",
+									"    pm.environment.set(\"feeId\", fee.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fee\": {\n\t\t\"description\": \"A unique name/description for this fee\",\n\t\t\"lower_range\": 0,\n\t\t\"upper_range\": 1000,\n\t\t\"flat_fee\": 8.00,\n\t\t\"variable_fee\": 3.0\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fees"
+							]
+						},
+						"description": "Creates a new fee."
+					},
+					"response": []
+				},
+				{
+					"name": "index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "317335ad-0de4-451f-84d4-e91330fed237",
+								"exec": [
+									"var fees = pm.response.json();",
+									"",
+									"if (fees !== undefined && fees.length > 0) {",
+									"    pm.environment.set(\"feeId\", fees[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/fees",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fees"
+							]
+						},
+						"description": "Lists all the fee ranges in the system. By default only the last 10 created records are returned. Parameters must be sent in order to retrieve the next pages."
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{auth_email}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fee\": {\n\t\t\"description\": \"Another description\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/fees/8447fee2-7931-490c-a90e-e18b814bbe0e",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fees",
+								"8447fee2-7931-490c-a90e-e18b814bbe0e"
+							]
+						},
+						"description": "Updates an existing fee."
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d6deebd-e3f2-4abe-88e9-6db4499cd7df",
+								"exec": [
+									"var fee = pm.response.json();",
+									"",
+									"if (fee !== undefined) {",
+									"    pm.environment.set(\"feeId\", fee.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/fees/{{feeId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fees",
+								"{{feeId}}"
+							]
+						},
+						"description": "Returns the details for a fee."
+					},
+					"response": []
+				},
+				{
+					"name": "destroy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5c3b6435-f532-4461-b8c9-fd6715fe5b70",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{host}}/fees/{{feeId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"fees",
+								"{{feeId}}"
+							]
+						},
+						"description": "Deletes a fee"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tokens",
+			"item": [
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d8157f22-3996-49f4-b89b-f753058cd0fc",
+								"exec": [
+									"var token = pm.response.json();",
+									"",
+									"if (token !== undefined) {",
+									"    pm.environment.set(\"authToken\", token.token);",
+									"    pm.environment.set(\"authEmail\", token.user.email);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"token\": {\n\t\t\"token_type\": \"{{tokenType}}\",\n\t\t\"user\": { \n\t\t\t\"email\": \"{{userEmail}}\",\n\t\t\t\"password\": \"{{userPassword}}\"\n\t\t}\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/tokens",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Creates a new token for the given type. You should use this endpoint to request a \"session\" token so you can interact with the rest of the application."
+					},
+					"response": []
+				}
+			],
+			"description": "The tokens endpoint serves the purpose to provide the client user a safe way to either request a safe, expirable token to interact with the rest of the API or to change credentials such as a password reset.\n\nNotice that tokens have an expiration date, depending on the type of token. Session tokens will last for 1 hour whereas password reset tokens will last for 1 day. If you get an unauthorized error you should request a new token."
+		},
+		{
+			"name": "cards",
+			"item": [
+				{
+					"name": "index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bd282455-c25b-4171-a951-50c83ae32a18",
+								"exec": [
+									"var cards = pm.response.json();",
+									"",
+									"if (cards !== undefined && cards.length > 0) {",
+									"    pm.environment.set(\"cardId\", cards[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/cards",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"cards"
+							]
+						},
+						"description": "Lists all the active cards for the given user. If the requesting client is a `customer` it will default to active cards, `admin` users can list also inactive cards for historical purposes. By default only the last 10 created records are returned. Parameters must be sent in order to retrieve the next pages. See below"
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a2faefe4-8fd7-4750-9c69-923c7952dc71",
+								"exec": [
+									"var card = pm.response.json();",
+									"",
+									"if (card !== undefined) {",
+									"    pm.environment.set(\"cardId\", card.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/cards/{{cardId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"cards",
+								"{{cardId}}"
+							]
+						},
+						"description": "Returns the details of a certain transaction. If the given user uuid is not the client's request user and the client's request user is a customer a `401 unauthorized` http error will be returned. Only admin users can retrieve details for all other user transactions."
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d900ca5-694e-40a5-8840-1a55880e47ce",
+								"exec": [
+									"var card = pm.response.json();",
+									"",
+									"if (card !== undefined) {",
+									"    pm.environment.set(\"cardId\", card.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"card\": {\n\t\t\"name_on_card\": \"Gustavo Rubio\",\n\t\t\"number\": \"4111111111111000\",\n\t\t\"csc\": \"123\",\n\t\t\"expiration_year\": \"2020\",\n\t\t\"expiration_month\": \"06\",\n\t\t\"card_type\": \"credit\",\n\t\t\"issuer\": \"visa\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/cards",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"cards"
+							]
+						},
+						"description": "Creates a new card with the given data. Card will be tested against issuer for validity when added but not for funds as no charge will be done. A card can be either a credit or debit card."
+					},
+					"response": []
+				},
+				{
+					"name": "destroy",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/cards/{{cardId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"cards",
+								"{{cardId}}"
+							]
+						},
+						"description": "Removes an existing card from a user on the system. If there are any transactions on the card already then the card is _soft deleted_ and its status is set to `removed` instead meaning that it won't appear anymore for the user but `admin` users can still see them."
+					},
+					"response": []
+				}
+			],
+			"description": "Cards are used in the system for two purposes mainly: to transfer money to or from the wallet. A card can be either a credit or debit card regardless of the bank."
+		},
+		{
+			"name": "transactions",
+			"item": [
+				{
+					"name": "index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8b71930b-0d40-47f8-bd0d-b4f08bb10084",
+								"exec": [
+									"var transactions = pm.response.json();",
+									"",
+									"if (transactions !== undefined && transactions.length > 0) {",
+									"    pm.environment.set(\"transactionId\", transactions[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/transactions",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"transactions"
+							]
+						},
+						"description": "Lists the transactions for the given user. By default only the last 10 created records are returned. Parameters must be sent in order to retrieve the next pages."
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "66dd4850-3f6c-49c3-bdab-77b3218c56ac",
+								"exec": [
+									"var transaction = pm.response.json();",
+									"",
+									"if (transaction !== undefined) {",
+									"    pm.environment.set(\"transactionId\", transaction.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/transactions/{{transactionId}}",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"transactions",
+								"{{transactionId}}"
+							]
+						},
+						"description": "Lists the transactions for the given user. By default only the last 10 created records are returned. Parameters must be sent in order to retrieve the next pages."
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-User-Email",
+								"value": "{{authEmail}}"
+							},
+							{
+								"key": "X-User-Token",
+								"value": "{{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"transaction\": {\n\t\t\"amount\": 2000,\n\t\t\"transaction_type\": \"withdrawal\",\n\t\t\"transferable\": {\n\t\t\t\"id\": \"{{cardId}}\"\n\t\t}\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{host}}/users/{{userId}}/transactions",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}",
+								"transactions"
+							]
+						},
+						"description": "Creates a new transaction for the given type and the given amount. This transaction is executed on behalf of the user passed as parameter so if the calling client is not the user of the resource the endpoint will return a `401 unauthorized` http error unless the calling client is an `admin`"
+					},
+					"response": []
+				}
+			],
+			"description": "Transactions are the basis of the wallet system. A transaction represents an operation between entities that affects balances of both sides, even for operations not involving electronic money."
+		},
+		{
+			"name": "versions",
+			"item": [
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}",
+							"host": [
+								"{{host}}"
+							]
+						},
+						"description": "Version output and default route"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "bank simulator",
+			"item": [
+				{
+					"name": "add card",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "wallet",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Testing@123!",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							},
+							{
+								"key": "Accept",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" standalone=\"yes\"?>\n<card>\n\t<cardHolder>Gustavo A Rubio</cardHolder>\n\t<number>4111-1111-1111-6000</number>\n\t<expirationMonth>02</expirationMonth>\n\t<expirationYear>2020</expirationYear>\n\t<cvc>123</cvc>\n</card>"
+						},
+						"url": {
+							"raw": "{{bankHost}}/bankSimulator.php?transaction=card",
+							"host": [
+								"{{bankHost}}"
+							],
+							"path": [
+								"bankSimulator.php"
+							],
+							"query": [
+								{
+									"key": "transaction",
+									"value": "card"
+								}
+							]
+						},
+						"description": "Simple bank simulator"
+					},
+					"response": []
+				},
+				{
+					"name": "deposit",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "walletapi",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Testing@123!",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic dGVzdGluZzp0ZXN0aW5n"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" standalone=\"yes\"?>\n<deposit>\n\t<cardToken>31d9ddeaa80bc88c1f3117b9724726ebcc7fc72d</cardToken>\n\t<amount>1000</amount>\n</deposit>"
+						},
+						"url": {
+							"raw": "{{bankHost}}/bankSimulator.php?transaction=deposit",
+							"host": [
+								"{{bankHost}}"
+							],
+							"path": [
+								"bankSimulator.php"
+							],
+							"query": [
+								{
+									"key": "transaction",
+									"value": "deposit"
+								}
+							]
+						},
+						"description": "Simple bank simulator"
+					},
+					"response": []
+				},
+				{
+					"name": "withdraw",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "walletapi",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Testing@123!",
+									"type": "string"
+								},
+								{
+									"key": "saveHelperData",
+									"type": "any"
+								},
+								{
+									"key": "showPassword",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic dGVzdGluZzp0ZXN0aW5n"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/xml"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<?xml version=\"1.0\" standalone=\"yes\"?>\n<deposit>\n\t<cardToken>e3cbba8883fe746c6e35783c9404b4bc0c7ee9eb</cardToken>\n\t<amount>1000</amount>\n</deposit>"
+						},
+						"url": {
+							"raw": "{{bankHost}}/bankSimulator.php?transaction=withdrawal",
+							"host": [
+								"{{bankHost}}"
+							],
+							"path": [
+								"bankSimulator.php"
+							],
+							"query": [
+								{
+									"key": "transaction",
+									"value": "withdrawal"
+								}
+							]
+						},
+						"description": "Simple bank simulator"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

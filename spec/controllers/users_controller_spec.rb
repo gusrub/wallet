@@ -29,7 +29,7 @@ RSpec.describe UsersController, type: :controller do
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.attributes_for(:user)
+    FactoryBot.attributes_for(:user)
   }
 
   let(:invalid_attributes) {
@@ -46,7 +46,7 @@ RSpec.describe UsersController, type: :controller do
   let(:params) { { format: :json } }
 
   describe "GET #index" do
-    let!(:resource) { FactoryGirl.create_list(:user, 16) }
+    let!(:resource) { FactoryBot.create_list(:user, 16) }
     subject { get :index, params: params}
 
     context "Authenticated with admin user" do
@@ -77,7 +77,7 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:user) { FactoryGirl.create(:user) }
+    let!(:user) { FactoryBot.create(:user) }
     let(:params) { {id: user.id, format: :json} }
     subject { get :show, params: params }
 
@@ -170,8 +170,8 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "PUT #update" do
-    let!(:user) { FactoryGirl.create(:user) }
-    let(:new_attributes) { FactoryGirl.attributes_for :user }
+    let!(:user) { FactoryBot.create(:user) }
+    let(:new_attributes) { FactoryBot.attributes_for :user }
     let(:params) { {id: user.id, user: new_attributes, format: :json } }
     subject { put :update, params: params }
 
@@ -224,7 +224,7 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let!(:user) { FactoryGirl.create(:user) }
+    let!(:user) { FactoryBot.create(:user) }
     let(:params) { {id: user.id, format: :json } }
     subject { delete :destroy, params: params }
 

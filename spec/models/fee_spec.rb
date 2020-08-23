@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Fee, type: :model do
-  subject { FactoryGirl.build :fee }
+  subject { FactoryBot.build :fee }
 
   describe :validations do
     it { should validate_presence_of(:description) }
@@ -16,8 +16,8 @@ RSpec.describe Fee, type: :model do
     it { should validate_numericality_of(:variable_fee).is_greater_than_or_equal_to(0) }    
 
     it "should validate the upper and lower ranges" do
-      FactoryGirl.create(:fee, lower_range: 0, upper_range: 1000)
-      FactoryGirl.create(:fee, lower_range: 1001, upper_range: 5000)
+      FactoryBot.create(:fee, lower_range: 0, upper_range: 1000)
+      FactoryBot.create(:fee, lower_range: 1001, upper_range: 5000)
       subject.lower_range = 900
       subject.upper_range = 2000
       subject.valid?

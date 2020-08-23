@@ -25,9 +25,9 @@ require 'rails_helper'
 
 RSpec.describe TransactionsController, type: :controller do
 
-  let(:sender) { FactoryGirl.create(:user_with_cards) }
-  let(:receiver) { FactoryGirl.create(:user_with_cards) }
-  let(:internal_account) { FactoryGirl.create(:account, account_type: Account.account_types[:internal]) }
+  let(:sender) { FactoryBot.create(:user_with_cards) }
+  let(:receiver) { FactoryBot.create(:user_with_cards) }
+  let(:internal_account) { FactoryBot.create(:account, account_type: Account.account_types[:internal]) }
 
   let(:valid_attributes) {
     {
@@ -53,13 +53,13 @@ RSpec.describe TransactionsController, type: :controller do
 
   let(:params) { { format: :json, user_id: sender.id } }
   let!(:fees) do
-    FactoryGirl.create(:fee, description: "Fee 1", lower_range: 0, upper_range: 1000, flat_fee: 8, variable_fee: 3)
-    FactoryGirl.create(:fee, description: "Fee 2", lower_range: 1001, upper_range: 5000, flat_fee: 6, variable_fee: 2.5)
-    FactoryGirl.create(:fee, description: "Fee 3", lower_range: 5001, upper_range: 10000, flat_fee: 4, variable_fee: 2)
-    FactoryGirl.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
+    FactoryBot.create(:fee, description: "Fee 1", lower_range: 0, upper_range: 1000, flat_fee: 8, variable_fee: 3)
+    FactoryBot.create(:fee, description: "Fee 2", lower_range: 1001, upper_range: 5000, flat_fee: 6, variable_fee: 2.5)
+    FactoryBot.create(:fee, description: "Fee 3", lower_range: 5001, upper_range: 10000, flat_fee: 4, variable_fee: 2)
+    FactoryBot.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
     Fee.all
   end
-  let!(:default_account) { FactoryGirl.create(:account, account_type: 'internal') }
+  let!(:default_account) { FactoryBot.create(:account, account_type: 'internal') }
 
   before :each do
     sender.account.update_attributes(balance: 3000)
@@ -67,7 +67,7 @@ RSpec.describe TransactionsController, type: :controller do
   end
 
   describe "GET #index" do
-    let!(:resource) { FactoryGirl.create_list(:transaction, 5, user: sender) }
+    let!(:resource) { FactoryBot.create_list(:transaction, 5, user: sender) }
     subject { get :index, params: params}
 
     context "Authenticated with admin user" do
@@ -109,7 +109,7 @@ RSpec.describe TransactionsController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:transaction) { FactoryGirl.create(:transaction, user: sender) }
+    let!(:transaction) { FactoryBot.create(:transaction, user: sender) }
     let(:params) { { user_id: sender.id, id: transaction.id, format: :json} }
     subject { get :show, params: params }
 
@@ -125,7 +125,7 @@ RSpec.describe TransactionsController, type: :controller do
       include_context "authenticated user", :customer
 
       context "for authorized user" do
-        let!(:transaction) { FactoryGirl.create(:transaction, user: authenticated_user) }
+        let!(:transaction) { FactoryBot.create(:transaction, user: authenticated_user) }
         let(:params) { { user_id: authenticated_user.id, id: transaction.id, format: :json } }
 
         it "returns a success response" do

@@ -28,9 +28,9 @@ RSpec.describe TokensController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Token. As you add validations to Token, be sure to
   # adjust the attributes here as well.
-  let!(:user) { FactoryGirl.create(:user, password: "Testing@123!", password_confirmation: "Testing@123!") }
+  let!(:user) { FactoryBot.create(:user, password: "Testing@123!", password_confirmation: "Testing@123!") }
   let(:valid_attributes) {
-    FactoryGirl.attributes_for(:token, token_type: 'authentication').merge({user: { email: user.email, password: "Testing@123!"}})
+    FactoryBot.attributes_for(:token, token_type: 'authentication').merge({user: { email: user.email, password: "Testing@123!"}})
   }
 
   let(:invalid_attributes) {
@@ -72,7 +72,7 @@ RSpec.describe TokensController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:token) { FactoryGirl.create(:token) }
+    let!(:token) { FactoryBot.create(:token) }
     let(:params) { {id: token.id, format: :json} }
     subject { get :show, params: params }
 

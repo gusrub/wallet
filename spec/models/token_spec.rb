@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Token, type: :model do
-  subject { FactoryGirl.build :token }
+  subject { FactoryBot.build :token }
 
   describe :validations do
     it { should validate_presence_of(:user) }

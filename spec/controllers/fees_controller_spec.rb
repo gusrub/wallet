@@ -29,7 +29,7 @@ RSpec.describe FeesController, type: :controller do
   # Fee. As you add validations to Fee, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    FactoryGirl.attributes_for(:fee)
+    FactoryBot.attributes_for(:fee)
   }
 
   let(:invalid_attributes) {
@@ -46,10 +46,10 @@ RSpec.describe FeesController, type: :controller do
 
   describe "GET #index" do
     let!(:resource) do
-      FactoryGirl.create(:fee, description: "Fee 1", lower_range: 0, upper_range: 1000, flat_fee: 8, variable_fee: 3)
-      FactoryGirl.create(:fee, description: "Fee 2", lower_range: 1001, upper_range: 5000, flat_fee: 6, variable_fee: 2.5)
-      FactoryGirl.create(:fee, description: "Fee 3", lower_range: 5001, upper_range: 10000, flat_fee: 4, variable_fee: 2)
-      FactoryGirl.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
+      FactoryBot.create(:fee, description: "Fee 1", lower_range: 0, upper_range: 1000, flat_fee: 8, variable_fee: 3)
+      FactoryBot.create(:fee, description: "Fee 2", lower_range: 1001, upper_range: 5000, flat_fee: 6, variable_fee: 2.5)
+      FactoryBot.create(:fee, description: "Fee 3", lower_range: 5001, upper_range: 10000, flat_fee: 4, variable_fee: 2)
+      FactoryBot.create(:fee, description: "Fee 4", lower_range: 10001, upper_range: 99999999.99, flat_fee: 3, variable_fee: 1)
       Fee.all
     end
     subject { get :index, params: params }
@@ -81,7 +81,7 @@ RSpec.describe FeesController, type: :controller do
   end
 
   describe "GET #show" do
-    let(:fee) { FactoryGirl.create(:fee) }
+    let(:fee) { FactoryBot.create(:fee) }
     let(:params) { {id: fee.to_param, format: :json} }
     subject { get :show, params: params }
 
@@ -159,7 +159,7 @@ RSpec.describe FeesController, type: :controller do
   end
 
   describe "PUT #update" do
-    let(:fee) { FactoryGirl.create(:fee) }
+    let(:fee) { FactoryBot.create(:fee) }
     let(:new_attributes) { { description: "Another one" }}
     let(:params) { {id: fee.to_param, fee: new_attributes, format: :json} }
 
@@ -208,7 +208,7 @@ RSpec.describe FeesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let!(:fee) { FactoryGirl.create(:fee) }
+    let!(:fee) { FactoryBot.create(:fee) }
     let(:params) { {id: fee.id, format: :json} }
     subject { delete :destroy, params: params }
     context "Authenticated with admin user" do

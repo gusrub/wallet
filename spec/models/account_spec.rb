@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Account, type: :model do
-  subject { FactoryGirl.build :account }
+  subject { FactoryBot.build :account }
 
   describe :validations do
     it { should validate_presence_of(:user) }

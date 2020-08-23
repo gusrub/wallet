@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Card, type: :model do
-  subject { FactoryGirl.build :card }
+  subject { FactoryBot.build :card }
 
   describe :validations do
     it { should validate_presence_of(:card_type) }
@@ -14,9 +14,9 @@ RSpec.describe Card, type: :model do
     it { should validate_presence_of(:bank_token) }
 
     context "when card has transactions" do
-      let!(:user) { FactoryGirl.create(:user_with_cards) }
+      let!(:user) { FactoryBot.create(:user_with_cards) }
       let!(:card) { user.cards.first }
-      let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+      let!(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
 
       it "should validate transactions on destroy" do
         expect(card.destroy).to be false
@@ -45,9 +45,9 @@ RSpec.describe Card, type: :model do
     before :each do
       4.times do |n|
         if n.odd?
-          FactoryGirl.create(:card, expiration: 1.month.ago)
+          FactoryBot.create(:card, expiration: 1.month.ago)
         else
-          FactoryGirl.create(:card)
+          FactoryBot.create(:card)
         end
       end
     end

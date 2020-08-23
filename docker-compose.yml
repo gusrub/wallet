@@ -1,0 +1,32 @@
+version: '3.3'
+services:
+  web:
+    build: .
+    command: bundle exec puma -C config/puma.rb
+    volumes:
+      - '.:/app'
+    ports:
+      - '3000:3000'
+      - '8080:8080'
+    networks:
+      - internal
+    depends_on:
+      - postgres
+    stdin_open: true
+    tty: true
+  postgres:
+    image: 'postgres:11.2-alpine'
+    volumes:
+      - 'postgresql-data:/var/lib/postgresql/data'
+    ports:
+      - '5432:5432'
+    networks:
+      - internal
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+volumes:
+  postgresql-data: null
+networks:
+  internal: null

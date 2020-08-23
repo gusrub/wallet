@@ -52,10 +52,10 @@ RSpec.describe CardsController, type: :controller do
     }
   }
 
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
 
   describe "GET #index" do
-    let!(:resource) { FactoryGirl.create_list(:user_with_cards, 5) }
+    let!(:resource) { FactoryBot.create_list(:user_with_cards, 5) }
     let!(:user) { resource.first }
     let(:params) { { format: :json, user_id: user.id } }
     subject { get :index, params: params }
@@ -87,7 +87,7 @@ RSpec.describe CardsController, type: :controller do
 
       context "for authorized user" do
         let(:params) { { user_id: authenticated_user.id, format: :json } }
-        let!(:cards) { FactoryGirl.create_list(:card, 4, user: authenticated_user) }
+        let!(:cards) { FactoryBot.create_list(:card, 4, user: authenticated_user) }
 
         it "returns a success response" do
           subject
@@ -124,7 +124,7 @@ RSpec.describe CardsController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:card) { FactoryGirl.create(:card, user: user) }
+    let!(:card) { FactoryBot.create(:card, user: user) }
     let(:params) { { user_id: user.id, id: card.id, format: :json } }
     subject { get :show, params: params }
 
@@ -136,7 +136,7 @@ RSpec.describe CardsController, type: :controller do
       end
 
       context "when card had transactions and was removed" do
-        let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+        let!(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
 
         before :each do
           card.removed!
@@ -155,7 +155,7 @@ RSpec.describe CardsController, type: :controller do
       include_context "authenticated user", :customer
 
       context "for authorized user" do
-        let!(:card) { FactoryGirl.create(:card, user: authenticated_user) }
+        let!(:card) { FactoryBot.create(:card, user: authenticated_user) }
         let(:params) { { user_id: authenticated_user.id, id: card.id, format: :json } }
 
         it "returns a success response" do
@@ -164,7 +164,7 @@ RSpec.describe CardsController, type: :controller do
         end
 
         context "when card had transactions and was removed" do
-          let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+          let!(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
 
           before :each do
             card.removed!
@@ -251,7 +251,7 @@ RSpec.describe CardsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    let!(:card) { FactoryGirl.create(:card, user: user) }
+    let!(:card) { FactoryBot.create(:card, user: user) }
     let(:params) { { user_id: user.id, id: card.id, format: :json } }
     subject { delete :destroy, params: params }
 
@@ -262,7 +262,7 @@ RSpec.describe CardsController, type: :controller do
       end
 
       context "when card has transactions" do
-        let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+        let!(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
 
         it "only marks card as removed" do
           expect { subject }.to_not change(Card, :count)
@@ -276,7 +276,7 @@ RSpec.describe CardsController, type: :controller do
       include_context "authenticated user", :customer
 
       context "for authorized user" do
-        let!(:card) { FactoryGirl.create(:card, user: authenticated_user) }
+        let!(:card) { FactoryBot.create(:card, user: authenticated_user) }
         let(:params) { { user_id: authenticated_user.id, id: card.id, format: :json } }
         it "returns a success response" do
           subject
@@ -284,7 +284,7 @@ RSpec.describe CardsController, type: :controller do
         end
 
         context "when card has transactions" do
-          let!(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
+          let!(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: card) }
 
           it "only marks card as removed" do
             expect { subject }.to_not change(Card, :count)

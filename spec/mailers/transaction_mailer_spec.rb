@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe TransactionMailer, type: :mailer do
   describe "transaction notification" do
     context "for a transfer" do
-      let(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:transfer]) }
+      let(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:transfer]) }
       let(:mail) { TransactionMailer.notification(transaction) }
 
       it "renders the headers" do
@@ -13,8 +13,8 @@ RSpec.describe TransactionMailer, type: :mailer do
       end
     end
     context "for a deposit" do
-      let(:transferable) { FactoryGirl.create(:card) }
-      let(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:deposit], transferable: transferable) }
+      let(:transferable) { FactoryBot.create(:card) }
+      let(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:deposit], transferable: transferable) }
       let(:mail) { TransactionMailer.notification(transaction) }
 
       it "renders the headers" do
@@ -24,8 +24,8 @@ RSpec.describe TransactionMailer, type: :mailer do
       end
     end
     context "for a withdrawal" do
-      let(:transferable) { FactoryGirl.create(:card) }
-      let(:transaction) { FactoryGirl.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: transferable) }
+      let(:transferable) { FactoryBot.create(:card) }
+      let(:transaction) { FactoryBot.create(:transaction, transaction_type: Transaction.transaction_types[:withdrawal], transferable: transferable) }
       let(:mail) { TransactionMailer.notification(transaction) }
 
       it "renders the headers" do
