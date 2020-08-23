@@ -1,31 +1,52 @@
-image: ruby:2.4.1
+image: ruby:2.6.5-alpine
 
 pipelines:
   default:
     - step:
+        name: Run tests
         caches:
           - bundler
         services:
           - postgres
         script: # Modify the commands below to build your repository.
-          - echo "DB Host is $DB_HOST"
-          - echo "DB Port is $DB_PORT"
-          - echo "DB Name is $DB_NAME"
-          - echo "DB User is $DB_USERNAME"
-          - echo "Rails ENV is $RAILS_ENV"
-          - apt-get update
-          - apt-get -y install nodejs npm
+          - apk update
+          - apk add --no-cache build-base libxml2-dev libxslt-dev wget bash tzdata postgresql-dev libpq openssh git tar file php7 php7-xml php7-simplexml
+          - php -S 127.0.0.1:8080 -t ./ &
           - gem install bundler
           - bundle install
           - bundle exec rails db:drop db:create db:migrate
-          - rspec
+          - bundle exec rails rspec
+  branches:
+    master:
+      - step:
+          name: Build artifact
+          script:
+            - apk update
+            - apk add --no-cache git tar file
+            - git archive --format=tar.gz $BITBUCKET_BRANCH -o application.tar.gz
+            - echo Artifact is application.tar.gz
+            - file application.tar.gz
+          artifacts:
+            - application.tar.gz
+      - step:
+          name: Deploy to production
+          deployment: production
+          trigger: manual
+          script:
+            - pipe: atlassian/heroku-deploy:1.1.4
+              variables:
+                HEROKU_API_KEY: $HEROKU_API_KEY
+                HEROKU_APP_NAME: $HEROKU_APP_NAME
+                ZIP_FILE: application.tar.gz
+                # WAIT: '<boolean>' # Optional.
+                # DEBUG: '<boolean>' # Optional
 
 definitions:
   caches:
     bundler: /usr/local/bundle
   services:
     postgres:
-      image: postgres:9.6
+      image: postgres:11.2
       environment:
-        POSTGRES_DB: "walletapi"
-        POSTGRES_USER: "walletapi"
+        POSTGRES_DB: walletapi_test
+        POSTGRES_USER: walletapi
